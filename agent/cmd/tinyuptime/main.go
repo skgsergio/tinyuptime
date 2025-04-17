@@ -31,37 +31,37 @@ var (
 	checkSchedulerInterval = flag.Int(
 		"check-scheduler-interval",
 		IntFromEnv("TINYUPTIME_CHECK_SCHEDULER_INTERVAL", 30),
-		"check interval in seconds (env var \"TINYUPTIME_CHECK_SCHEDULER_INTERVAL\")",
+		"interval for stale checks comprobation and check scheduling in seconds (env var \"TINYUPTIME_CHECK_SCHEDULER_INTERVAL\")",
 	)
 
 	checkMaxConcurrency = flag.Int(
 		"check-max-concurrency",
 		IntFromEnv("TINYUPTIME_CHECK_MAX_CONCURRENCY", 100),
-		"max concurrent checks (env var \"TINYUPTIME_CHECK_MAX_CONCURRENCY\")",
+		"maximum concurrent checks at the same time (env var \"TINYUPTIME_CHECK_MAX_CONCURRENCY\")",
 	)
 
 	batchSize = flag.Int(
 		"batch-size",
 		IntFromEnv("TINYUPTIME_BATCH_SIZE", 50),
-		"result batch size (env var \"TINYUPTIME_BATCH_SIZE\")",
+		"how many results to batch before sending to Tinybird (env var \"TINYUPTIME_BATCH_SIZE\")",
 	)
 
 	batchFlushInterval = flag.Int(
 		"batch-flush-interval",
 		IntFromEnv("TINYUPTIME_BATCH_FLUSH_INTERVAL", 5),
-		"flush interval in seconds (env var \"TINYUPTIME_BATCH_FLUSH_INTERVAL\")",
+		"how often the pending batches are flushed if didn't reach the batch size (env var \"TINYUPTIME_BATCH_FLUSH_INTERVAL\")",
 	)
 
 	tbApiEndpoint = flag.String(
 		"tb-api-endpoint",
 		StrFromEnv("TINYUPTIME_TB_API_ENDPOINT", "https://api.tinybird.co"),
-		"Tinybird region API endpoint (env var \"TINYUPTIME_TB_API_ENDPOINT\")",
+		"Tinybird's region API endpoint for your Tinyuptime workspace (env var \"TINYUPTIME_TB_API_ENDPOINT\")",
 	)
 
 	tbApiKeyFlag = flag.String(
 		"tb-api-key",
 		StrFromEnv("TINYUPTIME_TB_API_KEY", ""),
-		"Tinybird API Key (env var \"TINYUPTIME_TB_API_KEY\")",
+		"Tinybird's admin API Key for your Tinyuptime workspace (env var \"TINYUPTIME_TB_API_KEY\")",
 	)
 )
 
