@@ -123,7 +123,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	tbResults := tinybird.New[checker.Result](*tbApiEndpoint, *tbApiTokenFlag, "results")
+	tbResults := tinybird.New[checker.Result](*tbApiEndpoint, *tbApiTokenFlag, "results_landing")
 
 	ckr := checker.NewChecker(
 		ctx,

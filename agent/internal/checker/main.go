@@ -94,7 +94,7 @@ func (ckr *Checker) submit() {
 	for _, check := range ckr.checks {
 		if check.IsStale() {
 			log.Debug().
-				Str("name", check.Name).
+				Interface("check", check).
 				Msg("Submitting check")
 
 			ckr.pool.Submit(func() {

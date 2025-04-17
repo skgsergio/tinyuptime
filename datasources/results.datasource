@@ -1,16 +1,15 @@
 DESCRIPTION >
-    Check results
-
-TOKEN "agent" APPEND
+    Materialized check results from results_landing with private column from checks
 
 SCHEMA >
-    timestamp DateTime `json:$.timestamp`,
-    check_name String `json:$.check_name`,
-    success Bool `json:$.success`,
-    http_status Nullable(Int16) `json:$.http_status`,
-    duration_seconds Nullable(Float32) `json:$.duration_seconds`,
-    error Nullable(String) `json:$.error`
+    `timestamp` DateTime,
+    `check_name` String,
+    `success` Bool,
+    `http_status` Nullable(Int16),
+    `duration_seconds` Nullable(Float32),
+    `error` Nullable(String),
+    `private` Bool
 
 ENGINE MergeTree
-ENGINE_SORTING_KEY timestamp, check_name, success
 ENGINE_PARTITION_KEY toYYYYMM(timestamp)
+ENGINE_SORTING_KEY timestamp, check_name, success

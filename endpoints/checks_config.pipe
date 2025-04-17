@@ -6,4 +6,5 @@ TOKEN "agent" READ
 NODE all_checks
 SQL >
     SELECT * FROM checks
+
 TYPE ENDPOINT

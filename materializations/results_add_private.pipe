@@ -1,0 +1,13 @@
+DESCRIPTION >
+    Materialize the results_landing adding the private column from checks
+
+NODE materialize_results
+SQL >
+    SELECT
+        r.*,
+        c.private
+    FROM results_landing r
+    LEFT JOIN checks c ON r.check_name = c.name
+
+TYPE MATERIALIZED
+DATASOURCE results

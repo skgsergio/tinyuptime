@@ -8,7 +8,7 @@ The results are sent to [Tinybird](https://tinybird.co).
 ## Tinybird
 
 ### Overview
-TinyUptime is a simple uptime monitoring solution built with Tinybird. It allows you to configure website checks and store their results. The application monitors websites and provides information about their availability status.
+TinyUptime is a simple uptime monitoring solution built with Tinybird. It allows you to configure website checks and monitor their availability status. The system collects and stores check results, providing insights into website performance and uptime.
 
 ### Data Sources
 
@@ -22,19 +22,20 @@ curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=checks" \
        "name": "My Website",
        "url": "https://example.com",
        "host": "example.com",
-       "accepted_statuses": [200, 201, 301],
-       "keyword": "Example Domain",
-       "verify_ssl": 1,
-       "timeout_seconds": 30,
-       "interval_seconds": 60
+       "accepted_statuses": [200, 301],
+       "keyword": "Welcome",
+       "verify_ssl": true,
+       "timeout_seconds": 10,
+       "interval_seconds": 60,
+       "private": false
      }'
 ```
 
-#### results
-Stores the results of website check executions.
+#### results_landing
+Raw landing data source for check results.
 
 ```bash
-curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=results" \
+curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=results_landing" \
      -H "Authorization: Bearer $TB_AGENT_TOKEN" \
      -d '{
        "timestamp": "2023-05-01 12:00:00",
@@ -46,6 +47,9 @@ curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=results" \
      }'
 ```
 
+#### results
+Materialized view of check results with the private flag.
+
 ### Endpoints
 
 #### checks_config
@@ -56,14 +60,14 @@ curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/checks_config.jso
 ```
 
 #### last_status
-Retrieves the last status for all checks.
+Retrieves the last status for all active checks in the last 30 minutes.
 
 ```bash
 curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/last_status.json?token=$TB_PUBLIC_READER_TOKEN&tz=Europe/Madrid"
 ```
 
 #### failing_checks
-Retrieves all checks that are currently failing (last result was not successful).
+Retrieves all checks that are currently failing (last result was not successful) in the last 30 minutes.
 
 ```bash
 curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/failing_checks.json?token=$TB_PUBLIC_READER_TOKEN&tz=Europe/Madrid"

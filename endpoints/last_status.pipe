@@ -14,4 +14,5 @@ SQL >
     WHERE timestamp >= now() - INTERVAL 30 MINUTE
     GROUP BY check_name
     ORDER BY check_name
+
 TYPE ENDPOINT
