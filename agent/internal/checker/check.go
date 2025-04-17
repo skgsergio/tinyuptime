@@ -75,6 +75,9 @@ func (ck *Check) Run(ctx context.Context) Result {
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: (ck.VerifySSL != nil && !*ck.VerifySSL)},
 		},
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
 	}
 
 	if ck.Timeout != nil && *ck.Timeout > 0 {
