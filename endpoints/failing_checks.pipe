@@ -5,6 +5,7 @@ TOKEN "public_reader" READ
 
 NODE failing_checks_for_active_checks_in_last_30m
 SQL >
+    %
     SELECT * EXCEPT success
     FROM (
         SELECT
