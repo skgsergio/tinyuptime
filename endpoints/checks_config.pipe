@@ -1,0 +1,7 @@
+DESCRIPTION >
+    Retrieve checks configuration
+
+NODE all_checks
+SQL >
+    SELECT * FROM checks
+TYPE ENDPOINT

@@ -1,0 +1,15 @@
+DESCRIPTION >
+    Checks configuration
+
+SCHEMA >
+    name String `json:$.name`,
+    url String `json:$.url`,
+    host Nullable(String) `json:$.host`,
+    accepted_statuses Array(Nullable(Int16)) `json:$.accepted_statuses[:]`,
+    keyword Nullable(String) `json:$.keyword`,
+    verify_ssl Nullable(UInt8) `json:$.verify_ssl`,
+    timeout_seconds Nullable(Int16) `json:$.timeout_seconds`,
+    interval_seconds Nullable(Int16) `json:$.interval_seconds`
+
+ENGINE MergeTree
+ENGINE_SORTING_KEY name, url

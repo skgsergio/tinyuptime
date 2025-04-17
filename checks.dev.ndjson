@@ -1,0 +1,3 @@
+{"name": "Cloudflare - 104.16.94.114", "url": "http://104.16.94.114/", "accepted_statuses": [403], "keyword": "error code: 1003"}
+{"name": "Cloudflare - 104.18.7.152 (sconde.net)", "url": "https://104.18.7.152/", "host": "sconde.net", "accepted_statuses": [200], "keyword": "Conde"}
+{"name": "Localhost - 127.0.0.1", "url": "http://127.0.0.1:8000/", "interval_seconds": 20}

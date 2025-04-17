@@ -1,0 +1,14 @@
+DESCRIPTION >
+    Check results
+
+SCHEMA >
+    timestamp DateTime `json:$.timestamp`,
+    check_name String `json:$.check_name`,
+    success Bool `json:$.success`,
+    http_status Nullable(Int16) `json:$.http_status`,
+    duration_seconds Nullable(Float32) `json:$.duration_seconds`,
+    error Nullable(String) `json:$.error`
+
+ENGINE MergeTree
+ENGINE_SORTING_KEY timestamp, check_name, success
+ENGINE_PARTITION_KEY toYYYYMM(timestamp)
