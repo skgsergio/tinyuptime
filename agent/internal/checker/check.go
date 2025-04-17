@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	defaultCheckInterval = 60
+	defaultCheckInterval = 120
 )
 
 type Result struct {
