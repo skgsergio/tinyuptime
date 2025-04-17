@@ -58,10 +58,10 @@ var (
 		"Tinybird's region API endpoint for your Tinyuptime workspace (env var \"TINYUPTIME_TB_API_ENDPOINT\")",
 	)
 
-	tbApiKeyFlag = flag.String(
-		"tb-api-key",
-		StrFromEnv("TINYUPTIME_TB_API_KEY", ""),
-		"Tinybird's admin API Key for your Tinyuptime workspace (env var \"TINYUPTIME_TB_API_KEY\")",
+	tbApiTokenFlag = flag.String(
+		"tb-api-token",
+		StrFromEnv("TINYUPTIME_TB_API_TOKEN", ""),
+		"Tinybird's 'agent' API token for your Tinyuptime workspace (env var \"TINYUPTIME_TB_API_TOKEN\")",
 	)
 )
 
@@ -109,11 +109,11 @@ func main() {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
 	}
 
-	if *tbApiKeyFlag == "" {
-		log.Fatal().Msg("missing Tinybird API Key!")
+	if *tbApiTokenFlag == "" {
+		log.Fatal().Msg("missing Tinybird API token!")
 	}
 
-	config, err := getChecksConfig(*tbApiEndpoint, *tbApiKeyFlag)
+	config, err := getChecksConfig(*tbApiEndpoint, *tbApiTokenFlag)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error reading config")
 	}
@@ -123,7 +123,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	tbResults := tinybird.New[checker.Result](*tbApiEndpoint, *tbApiKeyFlag, "results")
+	tbResults := tinybird.New[checker.Result](*tbApiEndpoint, *tbApiTokenFlag, "results")
 
 	ckr := checker.NewChecker(
 		ctx,

@@ -1,0 +1,19 @@
+DESCRIPTION >
+    Retrieve checks which its last result was not successful in the last 30 minutes
+
+TOKEN "public_reader" READ
+
+NODE failing_checks_for_active_checks_in_last_30m
+SQL >
+    SELECT * EXCEPT success
+    FROM (
+        SELECT
+            check_name AS check,
+            argMax(toString(timestamp,  {{ String(tz, 'Europe/Madrid') }}), timestamp) AS time,
+            argMax(success, timestamp) AS success
+        FROM results
+        GROUP BY check_name
+    )
+    WHERE success = 0
+    ORDER BY check
+TYPE ENDPOINT

@@ -1,6 +1,8 @@
 DESCRIPTION >
     Retrieve checks configuration
 
+TOKEN "agent" READ
+
 NODE all_checks
 SQL >
     SELECT * FROM checks

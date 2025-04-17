@@ -19,14 +19,14 @@ const (
 
 type TinyBird[T any] struct {
 	apiEndpoint string
-	apiKey      string
+	apiToken    string
 	datasource  string
 }
 
-func New[T any](apiEndpoint string, apiKey string, datasource string) *TinyBird[T] {
+func New[T any](apiEndpoint string, apiToken string, datasource string) *TinyBird[T] {
 	return &TinyBird[T]{
 		apiEndpoint: apiEndpoint,
-		apiKey:      apiKey,
+		apiToken:    apiToken,
 		datasource:  datasource,
 	}
 }
@@ -41,7 +41,7 @@ func (tb *TinyBird[T]) postEvents(payload []byte) bool {
 			Msg("Failed creating http request")
 	}
 
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", tb.apiKey))
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", tb.apiToken))
 
 	client := &http.Client{}
 	res, err := client.Do(req)

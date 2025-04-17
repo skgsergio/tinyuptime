@@ -1,0 +1,16 @@
+DESCRIPTION >
+    Retrieve last status for active checks in the last 30 minutes
+
+TOKEN "public_reader" READ
+
+NODE last_status_for_active_checks_in_last_30m
+SQL >
+    %
+    SELECT
+        check_name AS check,
+        argMax(toString(timestamp, {{ String(tz, 'Europe/Madrid') }}), timestamp) AS time,
+        argMax(success, timestamp) AS success
+    FROM results
+    GROUP BY check_name
+    ORDER BY check_name
+TYPE ENDPOINT
