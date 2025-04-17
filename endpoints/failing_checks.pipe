@@ -16,7 +16,7 @@ SQL >
         WHERE timestamp >= now() - INTERVAL 30 MINUTE
         GROUP BY check_name
     )
-    WHERE success = 0
+    WHERE success = false
     ORDER BY check
 
 TYPE ENDPOINT
