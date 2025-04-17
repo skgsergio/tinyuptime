@@ -13,6 +13,7 @@ SQL >
             argMax(toString(timestamp,  {{ String(tz, 'Europe/Madrid') }}), timestamp) AS time,
             argMax(success, timestamp) AS success
         FROM results
+        WHERE timestamp >= now() - INTERVAL 30 MINUTE
         GROUP BY check_name
     )
     WHERE success = 0
