@@ -27,7 +27,7 @@ curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=checks" \
        "verify_ssl": true,
        "timeout_seconds": 10,
        "interval_seconds": 60,
-       "private": false
+       "scope": "public"
      }'
 ```
 
@@ -48,7 +48,7 @@ curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=results_la
 ```
 
 #### results
-Materialized view of check results with the private flag.
+Materialized view of check results with the scope information from the checks datasource.
 
 ### Endpoints
 
@@ -63,12 +63,19 @@ curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/checks_config.jso
 Retrieves the last status for all active checks in the last 30 minutes.
 
 ```bash
-curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/last_status.json?token=$TB_PUBLIC_READER_TOKEN&tz=Europe/Madrid"
+curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/last_status.json?token=$TB_SCOPED_TOKEN&tz=Europe/Madrid"
 ```
 
 #### failing_checks
 Retrieves all checks that are currently failing (last result was not successful) in the last 30 minutes.
 
 ```bash
-curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/failing_checks.json?token=$TB_PUBLIC_READER_TOKEN&tz=Europe/Madrid"
+curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/failing_checks.json?token=$TB_SCOPED_TOKEN&tz=Europe/Madrid"
+```
+
+#### summary
+Retrieves a summary of successful and unsuccessful checks grouped by their name prefix.
+
+```bash
+curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/summary.json?token=$TB_SCOPED_TOKEN&tz=Europe/Madrid"
 ```

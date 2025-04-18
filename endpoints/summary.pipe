@@ -1,0 +1,31 @@
+DESCRIPTION >
+    Retrieve a summary of the statuses per group
+
+NODE summary_for_active_checks
+SQL >
+    %
+    SELECT
+        CASE
+            WHEN length(splitByString(' - ', check)) == 2 THEN splitByString(' - ', check)[1]
+            ELSE 'Ungrouped'
+        END AS group_name,
+        scope,
+        countIf(success = true) AS successful_checks,
+        countIf(success = false) AS unsuccessful_checks,
+        count() AS total_checks
+    FROM
+        (
+            SELECT
+                check_name AS check,
+                scope,
+                argMax(toString(timestamp, {{ String(tz, 'Europe/Madrid') }}), timestamp) AS time,
+                argMax(success, timestamp) AS success
+            FROM results
+            WHERE timestamp >= now() - INTERVAL 30 MINUTE
+            GROUP BY check_name, scope
+            ORDER BY check_name
+        )
+    GROUP BY group_name, scope
+    ORDER BY group_name
+
+TYPE ENDPOINT
