@@ -1,6 +1,8 @@
 DESCRIPTION >
     Retrieve checks which its last result was not successful in the last 30 minutes
 
+TOKEN "endpoint_unscoped" READ
+
 NODE failing_checks_for_active_checks
 SQL >
     %

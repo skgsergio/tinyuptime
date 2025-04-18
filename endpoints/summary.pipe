@@ -1,6 +1,8 @@
 DESCRIPTION >
     Retrieve a summary of the statuses per group
 
+TOKEN "endpoint_unscoped" READ
+
 NODE summary_for_active_checks
 SQL >
     %
