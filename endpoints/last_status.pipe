@@ -13,7 +13,7 @@ SQL >
     FROM results
     WHERE
         timestamp >= now() - INTERVAL 30 MINUTE
-        AND private = false
+        AND scope = 'public'
     GROUP BY check_name
     ORDER BY check_name
 

@@ -10,7 +10,7 @@ SCHEMA >
     `verify_ssl` Nullable(Bool) `json:$.verify_ssl`,
     `timeout_seconds` Nullable(Int16) `json:$.timeout_seconds`,
     `interval_seconds` Nullable(Int16) `json:$.interval_seconds`,
-    `private` Bool DEFAULT 'false' `json:$.private`
+    `scope` String DEFAULT 'public' `json:$.scope`
 
 ENGINE MergeTree
 ENGINE_SORTING_KEY name, url
