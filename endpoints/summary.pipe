@@ -11,8 +11,8 @@ SQL >
             ELSE 'Ungrouped'
         END AS group_name,
         scope,
-        countIf(last_check_success = true) AS successful_checks,
-        countIf(last_check_success = false) AS failing_checks,
+        countIf(success = true) AS successful_checks,
+        countIf(success = false) AS failing_checks,
         count() AS total_checks,
         max(last_check_timestamp) AS last_check_timestamp
     FROM
