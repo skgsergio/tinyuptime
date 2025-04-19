@@ -11,8 +11,8 @@ SQL >
         scope,
         groupArray(toString(timestamp, {{ String(tz, 'Europe/Madrid') }})) AS timestamps,
         groupArray(success) AS success_statuses,
-        argMax(duration_seconds, timestamp) AS last_check_duration_seconds,
-        argMax(error, timestamp) AS last_check_error
+        argMax(ifNull(duration_seconds, NaN), timestamp) AS last_check_duration_seconds,
+        argMax(ifNull(error, ''), timestamp) AS last_check_error
     FROM (
         SELECT
             check_name,
