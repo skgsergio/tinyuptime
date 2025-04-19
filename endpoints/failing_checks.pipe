@@ -10,12 +10,15 @@ SQL >
     FROM (
         SELECT
             check_name AS check,
-            scope,
+            argMax(scope, timestamp) AS scope,
             argMax(toString(timestamp,  {{ String(tz, 'Europe/Madrid') }}), timestamp) AS time,
-            argMax(success, timestamp) AS success
+            argMax(success, timestamp) AS success,
+            argMax(http_status, timestamp) AS http_status,
+            argMax(duration_seconds, timestamp) AS duration_seconds,
+            argMax(error, timestamp) AS error
         FROM results
         WHERE timestamp >= now() - INTERVAL 30 MINUTE
-        GROUP BY check_name, scope
+        GROUP BY check_name
     )
     WHERE success = false
     ORDER BY check
