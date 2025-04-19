@@ -8,81 +8,65 @@ The results are sent to [Tinybird](https://tinybird.co).
 ## Tinybird
 
 ### Overview
-TinyUptime is a simple uptime monitoring solution built with Tinybird. It allows you to configure website checks and monitor their availability status. The system collects and stores check results, providing insights into website performance and uptime.
 
-### Data Sources
+This project uses Tinybird to store and analyze uptime check results. It allows you to configure and monitor website/service status checks, providing summaries, status reports, and detailed check information.
 
-#### checks
-Stores the configuration for website checks that will be monitored.
+### Data sources
 
-```bash
+#### `checks`
+Stores the configuration for uptime checks.
+
+```shell
 curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=checks" \
-     -H "Authorization: Bearer $TB_ADMIN_TOKEN" \
-     -d '{
-       "name": "My Website",
-       "url": "https://example.com",
-       "host": "example.com",
-       "accepted_statuses": [200, 301],
-       "keyword": "Welcome",
-       "verify_ssl": true,
-       "timeout_seconds": 10,
-       "interval_seconds": 60,
-       "scope": "public"
-     }'
+    -H "Authorization: Bearer $TB_ADMIN_TOKEN" \
+    -d '{"name":"Example Site","url":"https://example.com","host":"example.com","accepted_statuses":[200,201,202],"keyword":"Example Domain","verify_ssl":true,"timeout_seconds":10,"interval_seconds":60,"scope":"public"}'
 ```
 
-#### results_landing
-Raw landing data source for check results.
+#### `results_landing`
+Landing data source for incoming check results.
 
-```bash
+```shell
 curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=results_landing" \
-     -H "Authorization: Bearer $TB_AGENT_TOKEN" \
-     -d '{
-       "timestamp": "2023-05-01 12:00:00",
-       "check_name": "My Website",
-       "success": true,
-       "http_status": 200,
-       "duration_seconds": 0.5,
-       "error": null
-     }'
+    -H "Authorization: Bearer $TB_ADMIN_TOKEN" \
+    -d '{"timestamp":"2023-06-01 12:00:00","check_name":"Example Site","success":true,"http_status":200,"duration_seconds":0.45,"error":null}'
 ```
 
-#### results
-Materialized view of check results with the scope information from the checks datasource.
+#### `results`
+Materialized check results with added scope information from the checks datasource.
 
 ### Endpoints
 
-#### checks_config
-Retrieves the configuration for all website checks.
+#### `checks_config`
+Retrieves all check configurations.
 
-```bash
-curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/checks_config.json?token=$TB_AGENT_TOKEN"
+```shell
+curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/checks_config.json?token=$TB_ADMIN_TOKEN"
 ```
 
-#### last_status
-Retrieves the last status for all active checks in the last hour.
+#### `summary`
+Provides a summary of status checks grouped by check group for the last hour.
 
-```bash
-curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/last_status.json?token=$TB_SCOPED_TOKEN&tz=Europe/Madrid"
+```shell
+curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/summary.json?token=$TB_ADMIN_TOKEN"
 ```
 
-#### last_hour
-Retrieves the last hour results for active checks.
+#### `last_status`
+Returns the latest status for all active checks in the last hour.
 
-```bash
-curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/last_hour.json?token=$TB_SCOPED_TOKEN&tz=Europe/Madrid"
+```shell
+curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/last_status.json?token=$TB_ADMIN_TOKEN"
 ```
 
-#### failing_checks
-Retrieves all checks that are currently failing (last result was not successful) in the last hour.
+#### `last_hour`
+Retrieves detailed check results for the last hour.
 
-```bash
-curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/failing_checks.json?token=$TB_SCOPED_TOKEN&tz=Europe/Madrid"
+```shell
+curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/last_hour.json?token=$TB_ADMIN_TOKEN"
 ```
 
-#### summary
-Retrieves a summary of successful and unsuccessful checks grouped by their name prefix.
+#### `failing_checks`
+Lists all checks that are currently failing.
 
-```bash
-curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/summary.json?token=$TB_SCOPED_TOKEN&tz=Europe/Madrid"
+```shell
+curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/failing_checks.json?token=$TB_ADMIN_TOKEN"
 ```
