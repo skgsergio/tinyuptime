@@ -9,7 +9,7 @@ SQL >
         check_name AS check,
         scope,
         toUnixTimestamp(max(timestamp)) AS last_check_timestamp,
-        argMax(success, timestamp) AS last_check_success
+        argMax(success, timestamp) AS success
     FROM results
     WHERE
         timestamp >= now() - INTERVAL 1 HOUR

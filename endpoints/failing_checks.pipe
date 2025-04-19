@@ -10,7 +10,7 @@ SQL >
         SELECT
             check_name AS check,
             argMax(scope, timestamp) AS scope,
-            toUnixTimestamp(max(timestamp)) AS time,
+            toUnixTimestamp(max(timestamp)) AS last_check_timestamp,
             argMax(success, timestamp) AS success,
             argMax(ifNull(http_status, NaN), timestamp) AS http_status,
             argMax(ifNull(duration_seconds, NaN), timestamp) AS duration_seconds,
