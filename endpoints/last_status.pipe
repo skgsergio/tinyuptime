@@ -1,5 +1,5 @@
 DESCRIPTION >
-    Retrieve last status for active checks in the last 30 minutes
+    Retrieve last status for active checks in the last hour
 
 TOKEN "endpoint_unscoped" READ
 
@@ -13,7 +13,7 @@ SQL >
         argMax(success, timestamp) AS success
     FROM results
     WHERE
-        timestamp >= now() - INTERVAL 30 MINUTE
+        timestamp >= now() - INTERVAL 1 HOUR
     GROUP BY check_name, scope
     ORDER BY check_name
 

@@ -1,5 +1,5 @@
 DESCRIPTION >
-    Retrieve a summary of the statuses per group
+    Retrieve a summary of the statuses per group for active checks in the last hour for active checks in the last hour
 
 TOKEN "endpoint_unscoped" READ
 
@@ -23,7 +23,7 @@ SQL >
                 argMax(toString(timestamp, {{ String(tz, 'Europe/Madrid') }}), timestamp) AS time,
                 argMax(success, timestamp) AS success
             FROM results
-            WHERE timestamp >= now() - INTERVAL 30 MINUTE
+            WHERE timestamp >= now() - INTERVAL 1 HOUR
             GROUP BY check_name, scope
             ORDER BY check_name
         )

@@ -1,0 +1,31 @@
+DESCRIPTION >
+    Retrieve last hour results for active checks in the last hour
+
+TOKEN "endpoint_unscoped" READ
+
+NODE last_hour_for_active_checks
+SQL >
+    %
+    SELECT
+        check_name,
+        scope,
+        groupArray(toString(timestamp, {{ String(tz, 'Europe/Madrid') }})) AS timestamps,
+        groupArray(success) AS success_statuses,
+        argMax(duration_seconds, timestamp) AS last_check_duration_seconds,
+        argMax(error, timestamp) AS last_check_error
+    FROM (
+        SELECT
+            check_name,
+            scope,
+            timestamp,
+            success,
+            duration_seconds,
+            error
+        FROM results
+        WHERE timestamp >= now() - INTERVAL 1 HOUR
+        ORDER BY timestamp DESC
+    )
+    GROUP BY check_name, scope
+    ORDER BY check_name
+
+TYPE ENDPOINT
