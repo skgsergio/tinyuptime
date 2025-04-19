@@ -6,6 +6,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"sync"
 	"time"
@@ -47,6 +48,26 @@ func (ck *Check) IsStale() bool {
 }
 
 func (ck *Check) Run(ctx context.Context) Result {
+	maxRetries := 3
+	baseDelay := 2 * time.Second
+
+	res := Result{}
+
+	for r := 1; r <= maxRetries; r++ {
+		res = ck.run(ctx)
+		if res.Success {
+			break
+		}
+
+		if r < maxRetries {
+			time.Sleep(time.Duration(math.Pow(2, float64(r))) * baseDelay)
+		}
+	}
+
+	return res
+}
+
+func (ck *Check) run(ctx context.Context) Result {
 	ck.mutex.Lock()
 	ck.running = true
 
