@@ -60,14 +60,21 @@ curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/checks_config.jso
 ```
 
 #### last_status
-Retrieves the last status for all active checks in the last 30 minutes.
+Retrieves the last status for all active checks in the last hour.
 
 ```bash
 curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/last_status.json?token=$TB_SCOPED_TOKEN&tz=Europe/Madrid"
 ```
 
+#### last_hour
+Retrieves the last hour results for active checks.
+
+```bash
+curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/last_hour.json?token=$TB_SCOPED_TOKEN&tz=Europe/Madrid"
+```
+
 #### failing_checks
-Retrieves all checks that are currently failing (last result was not successful) in the last 30 minutes.
+Retrieves all checks that are currently failing (last result was not successful) in the last hour.
 
 ```bash
 curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/failing_checks.json?token=$TB_SCOPED_TOKEN&tz=Europe/Madrid"
