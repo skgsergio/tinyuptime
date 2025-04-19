@@ -5,12 +5,11 @@ TOKEN "endpoint_unscoped" READ
 
 NODE last_status_for_active_checks
 SQL >
-    %
     SELECT
         check_name AS check,
         scope,
-        argMax(toString(timestamp, {{ String(tz, 'Europe/Madrid') }}), timestamp) AS time,
-        argMax(success, timestamp) AS success
+        toUnixTimestamp(max(timestamp)) AS last_check_timestamp,
+        argMax(success, timestamp) AS last_check_success
     FROM results
     WHERE
         timestamp >= now() - INTERVAL 1 HOUR

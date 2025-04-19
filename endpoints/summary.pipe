@@ -5,23 +5,23 @@ TOKEN "endpoint_unscoped" READ
 
 NODE summary_for_active_checks
 SQL >
-    %
     SELECT
         CASE
             WHEN length(splitByString(' - ', check)) == 2 THEN splitByString(' - ', check)[1]
             ELSE 'Ungrouped'
         END AS group_name,
         scope,
-        countIf(success = true) AS successful_checks,
-        countIf(success = false) AS failing_checks,
-        count() AS total_checks
+        countIf(last_success = true) AS successful_checks,
+        countIf(last_success = false) AS failing_checks,
+        count() AS total_checks,
+        max(last_timestamp) AS last_check_timestamp
     FROM
         (
             SELECT
                 check_name AS check,
                 scope,
-                argMax(toString(timestamp, {{ String(tz, 'Europe/Madrid') }}), timestamp) AS time,
-                argMax(success, timestamp) AS success
+                toUnixTimestamp(max(timestamp)) AS last_check_timestamp,
+                argMax(success, timestamp) AS last_check_success
             FROM results
             WHERE timestamp >= now() - INTERVAL 1 HOUR
             GROUP BY check_name, scope

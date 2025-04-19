@@ -5,13 +5,12 @@ TOKEN "endpoint_unscoped" READ
 
 NODE failing_checks_for_active_checks
 SQL >
-    %
     SELECT * EXCEPT success
     FROM (
         SELECT
             check_name AS check,
             argMax(scope, timestamp) AS scope,
-            argMax(toString(timestamp,  {{ String(tz, 'Europe/Madrid') }}), timestamp) AS time,
+            toUnixTimestamp(max(timestamp)) AS time,
             argMax(success, timestamp) AS success,
             argMax(ifNull(http_status, NaN), timestamp) AS http_status,
             argMax(ifNull(duration_seconds, NaN), timestamp) AS duration_seconds,
