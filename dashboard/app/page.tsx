@@ -3,6 +3,7 @@ import SummaryTable from '@/components/SummaryTable';
 import SummaryWidgets from '@/components/SummaryWidgets';
 import TinybirdLogo from '@/components/Logos/TinybirdLogo';
 import GitHubLogo from '@/components/Logos/GitHubLogo';
+import CheckStatusWidgets from '@/components/CheckStatusWidgets';
 
 export default function Home() {
   return (
@@ -26,6 +27,8 @@ export default function Home() {
         <SummaryWidgets />
         <SummaryTable />
       </SummaryProvider>
+      <h2 className="text-2xl font-bold mb-4 mt-8 text-white">Check Status</h2>
+      <CheckStatusWidgets />
     </main>
   );
 }
