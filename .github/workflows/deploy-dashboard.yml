@@ -47,10 +47,10 @@ jobs:
 
       - name: Build Next.js
         env:
-          NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST: ${{ secrets.TINYBIRD_TINYUPTIME_HOST }}
-          NEXT_PUBLIC_TINYBIRD_TINYUPTIME_SUMMARY_TOKEN: ${{ secrets.TINYBIRD_TINYUPTIME_SUMMARY_TOKEN }}
-          NEXT_PUBLIC_PAGE_TITLE: ${{ secrets.PAGE_TITLE }}
-          NEXT_PUBLIC_PAGE_DESCRIPTION: ""${{ secrets.PAGE_DESCRIPTION }}
+          NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST: ${{ secrets.TINYBIRD_HOST }}
+          NEXT_PUBLIC_TINYBIRD_TINYUPTIME_SUMMARY_TOKEN: ${{ secrets.TINYBIRD_SUMMARY_TOKEN }}
+          NEXT_PUBLIC_PAGE_TITLE: ${{ vars.PAGE_TITLE }}
+          NEXT_PUBLIC_PAGE_DESCRIPTION: ${{ vars.PAGE_DESCRIPTION }}
         run: npm run build
 
       - name: Upload artifact
