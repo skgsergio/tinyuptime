@@ -1,8 +1,8 @@
 import { SummaryProvider } from '@/contexts/SummaryContext';
 import SummaryTable from '@/components/SummaryTable';
 import SummaryWidgets from '@/components/SummaryWidgets';
-import TinybirdLogo from '@/components/Logos/TinybirdLogo';
-import GitHubLogo from '@/components/Logos/GitHubLogo';
+import TinybirdLogo from '@/components/Icons/TinybirdLogo';
+import GitHubLogo from '@/components/Icons/GitHubLogo';
 import CheckStatusWidgets from '@/components/CheckStatusWidgets';
 
 export default function Home() {

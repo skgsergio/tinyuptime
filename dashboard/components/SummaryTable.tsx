@@ -1,6 +1,7 @@
 'use client';
 
 import { useSummary } from '@/contexts/SummaryContext';
+import { formatDateTime } from '@/lib/dateUtils';
 
 export default function SummaryTable() {
   const { data, loading, error } = useSummary();
@@ -53,7 +54,7 @@ export default function SummaryTable() {
                 {row.total_checks}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-base text-gray-700 dark:text-gray-300">
-                {new Date(row.last_check_timestamp * 1000).toLocaleString()}
+                {formatDateTime(row.last_check_timestamp)}
               </td>
             </tr>
           ))}

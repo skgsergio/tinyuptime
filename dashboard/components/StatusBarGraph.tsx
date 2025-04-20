@@ -1,3 +1,5 @@
+import { formatDateTime } from '@/lib/dateUtils';
+
 interface StatusBarGraphProps {
   successStatuses: boolean[];
   timestamps: number[];
@@ -6,17 +8,6 @@ interface StatusBarGraphProps {
 export default function StatusBarGraph({ successStatuses, timestamps }: StatusBarGraphProps) {
   const recentStatuses = successStatuses.toReversed();
   const recentTimestamps = timestamps.toReversed();
-
-  const formatDateTime = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-  };
 
   return (
     <div className="mt-2">

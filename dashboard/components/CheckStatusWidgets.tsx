@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import StatusBarGraph from './StatusBarGraph';
-import { FirstIcon, PreviousIcon, NextIcon, LastIcon } from './Icons';
+import { FirstIcon, PreviousIcon, NextIcon, LastIcon } from './Icons/Pagination';
 
 interface CheckStatus {
   check_name: string;
