@@ -1,0 +1,70 @@
+name: Deploy dashboard to Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/deploy-dashboard.yml
+      - dashboard/**
+
+env:
+  PROJECT_DIR: dashboard
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.PROJECT_DIR }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Setup Next.js for Pages
+        uses: actions/configure-pages@v5
+        with:
+          static_site_generator: next
+          generator_config_file: ${{ env.PROJECT_DIR }}/next.config.mjs
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Next.js
+        env:
+          NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST: ${{ secrets.TINYBIRD_TINYUPTIME_HOST }}
+          NEXT_PUBLIC_TINYBIRD_TINYUPTIME_SUMMARY_TOKEN: ${{ secrets.TINYBIRD_TINYUPTIME_SUMMARY_TOKEN }}
+          NEXT_PUBLIC_PAGE_TITLE: ${{ secrets.PAGE_TITLE }}
+          NEXT_PUBLIC_PAGE_DESCRIPTION: ""${{ secrets.PAGE_DESCRIPTION }}
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.PROJECT_DIR }}/out
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
