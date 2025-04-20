@@ -78,7 +78,7 @@ export default function CheckStatusWidgets() {
       </div>
       {filteredChecks.length === 0 ? (
         <div className="text-center text-gray-400 py-8">
-          No checks found matching "{searchQuery}"
+          No checks found matching &quot;{searchQuery}&quot;
         </div>
       ) : (
         <>
@@ -147,4 +147,4 @@ export default function CheckStatusWidgets() {
       )}
     </div>
   );
-} 
+}
