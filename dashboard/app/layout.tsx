@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Status Dashboard",
-  description: "Monitor your services status",
+  title: process.env.NEXT_PUBLIC_PAGE_TITLE,
+  description: process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
 };
 
 export default function RootLayout({
