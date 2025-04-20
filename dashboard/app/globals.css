@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+:root {
+    --parakeet: #27f795;
+}
+
+.hover\:text-parakeet:hover {
+    color: var(--parakeet)
+}
