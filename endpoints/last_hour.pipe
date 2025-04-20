@@ -2,6 +2,7 @@ DESCRIPTION >
     Retrieve last hour results for active checks in the last hour
 
 TOKEN "endpoint_unscoped" READ
+TOKEN "public_dashboard_last_hour" READ
 
 NODE last_hour_for_active_checks
 SQL >

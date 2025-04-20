@@ -2,6 +2,7 @@ DESCRIPTION >
     Retrieve checks which its last result was not successful for active checks in the last hour
 
 TOKEN "endpoint_unscoped" READ
+TOKEN "public_dashboard_failing_checks" READ
 
 NODE failing_checks_for_active_checks
 SQL >
