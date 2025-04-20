@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from "react"
 
 const TinybirdLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
