@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import StatusBarGraph from './StatusBarGraph';
-import { FirstIcon, PreviousIcon, NextIcon, LastIcon } from './Icons/Pagination';
+import StatusBarGraph from '@/components/StatusBarGraph';
+import { FirstIcon, PreviousIcon, NextIcon, LastIcon } from '@/components/Icons/Pagination';
 
 interface CheckStatus {
   check_name: string;
