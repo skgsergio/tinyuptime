@@ -10,7 +10,7 @@ import (
 )
 
 type Config struct {
-	Checks []*checker.Check `json:"data"`
+	Checks checker.CheckSet `json:"data"`
 }
 
 func getChecksConfig(tbHost string, tbToken string) (*Config, error) {

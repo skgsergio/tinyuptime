@@ -17,14 +17,14 @@ var (
 
 type Checker struct {
 	ctx               context.Context
-	checks            []*Check
+	checks            CheckSet
 	pool              pond.Pool
 	schedulerInterval time.Duration
 	resultFn          func([]Result)
 	batcher           *batcher.Batcher[Result]
 }
 
-func NewChecker(ctx context.Context, checks []*Check, resultFn func([]Result), options ...func(*Checker)) *Checker {
+func NewChecker(ctx context.Context, checks CheckSet, resultFn func([]Result), options ...func(*Checker)) *Checker {
 	ckr := &Checker{
 		ctx:               ctx,
 		checks:            checks,
@@ -63,7 +63,7 @@ func (ckr *Checker) Run() {
 		}()
 	}
 
-	ckr.submit()
+	ckr.checks.ResetLastRun(defaultCheckInterval)
 
 	checksTicker := time.NewTicker(ckr.schedulerInterval)
 	defer checksTicker.Stop()
