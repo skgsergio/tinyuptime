@@ -24,7 +24,7 @@ export default function StatusBarGraph({ successStatuses, timestamps }: StatusBa
           />
         ))}
       </div>
-      <div className="flex justify-between text-xs text-gray-400 mt-1">
+      <div className="flex justify-between text-xs text-gray-300 mt-1 font-mono">
         <span>{formatDateTime(recentTimestamps[0])}</span>
         <span>{formatDateTime(recentTimestamps[recentTimestamps.length - 1])}</span>
       </div>
