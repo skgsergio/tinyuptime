@@ -56,4 +56,4 @@ export default async function SummaryTable() {
   } catch (error) {
     return <div className="text-red-500">Error: {error instanceof Error ? error.message : 'An error occurred'}</div>;
   }
-} 
+}

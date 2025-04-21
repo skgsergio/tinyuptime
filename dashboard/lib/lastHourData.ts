@@ -8,15 +8,15 @@ export interface LastHourData {
 }
 
 export async function fetchLastHourData(): Promise<LastHourData[]> {
-    const response = await fetch(
-      `${process.env.TINYBIRD_TINYUPTIME_HOST}/v0/pipes/last_hour.json?token=${process.env.TINYBIRD_TINYUPTIME_LAST_HOUR_TOKEN}`,
-      { next: { revalidate: 300 } }
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch summary data');
-    }
-    
-    const result = await response.json();
-    return result.data;
+  const response = await fetch(
+    `${process.env.TINYBIRD_TINYUPTIME_HOST}/v0/pipes/last_hour.json?token=${process.env.TINYBIRD_TINYUPTIME_LAST_HOUR_TOKEN}`,
+    { next: { revalidate: 300 } }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch summary data');
   }
+
+  const result = await response.json();
+  return result.data;
+}

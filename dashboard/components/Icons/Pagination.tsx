@@ -20,4 +20,4 @@ export function LastIcon({ className = "" }: { className?: string }) {
       <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 4.5l7.5 7.5-7.5 7.5m6-15l7.5 7.5-7.5 7.5" />
     </svg>
   );
-} 
+}

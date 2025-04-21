@@ -34,4 +34,4 @@ export default function PageRefresh() {
       Refreshing in {formattedTime}
     </span>
   );
-} 
+}

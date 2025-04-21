@@ -1,3 +1,5 @@
+'use client';
+
 import { formatDateTime } from '@/lib/dateUtils';
 
 interface StatusBarGraphProps {
@@ -30,4 +32,4 @@ export default function StatusBarGraph({ successStatuses, timestamps }: StatusBa
       </div>
     </div>
   );
-} 
+}

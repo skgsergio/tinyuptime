@@ -5,6 +5,8 @@ export const formatDateTime = (timestamp: number) => {
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false
+    hour12: false,
+    timeZoneName: 'short',
+    timeZone: process.env.NEXT_PUBLIC_TIMEZONE || 'Etc/UTC'
   });
-}; 
+};

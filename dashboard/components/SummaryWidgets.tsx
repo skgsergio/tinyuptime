@@ -7,12 +7,12 @@ export default async function SummaryWidgets() {
     if (data === undefined || data.length === 0) {
       return <div className="text-center p-4 text-gray-300">No data available</div>;
     }
-  
+
     // Calculate totals
     const totalSuccessful = data.reduce((sum: number, row: SummaryData) => sum + row.successful_checks, 0);
     const totalFailed = data.reduce((sum: number, row: SummaryData) => sum + row.failing_checks, 0);
     const totalChecks = data.reduce((sum: number, row: SummaryData) => sum + row.total_checks, 0);
-  
+
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
@@ -42,4 +42,4 @@ export default async function SummaryWidgets() {
   } catch (error) {
     return <div className="text-red-500">Error: {error instanceof Error ? error.message : 'An error occurred'}</div>;
   }
-} 
+}
