@@ -1,57 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import StatusBarGraph from '@/components/StatusBarGraph';
+import { useState } from 'react';
+import StatusBarGraph from './StatusBarGraph';
 import { FirstIcon, PreviousIcon, NextIcon, LastIcon } from '@/components/Icons/Pagination';
+import { LastHourData } from '@/lib/lastHourData';
 
-interface CheckStatus {
-  check_name: string;
-  scope: string;
-  timestamps: number[];
-  success_statuses: boolean[];
-  durations_seconds: (number | null)[];
-  last_check_error: string;
-}
 
-export default function CheckStatusWidgets() {
-  const [checkStatuses, setCheckStatuses] = useState<CheckStatus[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function PaginatedWidgets({ checkStatuses }: { checkStatuses: LastHourData[] }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const itemsPerPage = 12;
-
-  useEffect(() => {
-    const fetchCheckStatuses = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/last_hour.json?token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_LAST_HOUR_TOKEN}`
-        );
-        if (!response.ok) {
-          throw new Error('Failed to fetch check statuses');
-        }
-        const data = await response.json();
-        setCheckStatuses(data.data);
-        setLoading(false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-        setLoading(false);
-      }
-    };
-
-    fetchCheckStatuses();
-    // Refresh data every minute
-    const interval = setInterval(fetchCheckStatuses, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (loading) {
-    return <div className="text-white">Loading check statuses...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500">Error: {error}</div>;
-  }
 
   const filteredChecks = checkStatuses.filter(check =>
     check.check_name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -93,7 +51,7 @@ export default function CheckStatusWidgets() {
                     lastStatus ? 'bg-green-900' : 'bg-red-900'
                   }`}
                 >
-                  <h3 className="text-lg font-semibold text-white mb-2">
+                  <h3 className="text-xl font-semibold text-white mb-2">
                     {check.check_name}
                   </h3>
                   <StatusBarGraph
