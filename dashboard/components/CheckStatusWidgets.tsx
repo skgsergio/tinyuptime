@@ -123,7 +123,7 @@ export default function CheckStatusWidgets() {
                 <PreviousIcon />
               </button>
               <span className="text-white">
-                Page {currentPage} of {totalPages}
+                Page <span className="font-mono">{currentPage}</span> of <span className="font-mono">{totalPages}</span>
               </span>
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
