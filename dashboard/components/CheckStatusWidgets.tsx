@@ -71,7 +71,7 @@ export default function CheckStatusWidgets() {
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
-            setCurrentPage(1); // Reset to first page when searching
+            setCurrentPage(1);
           }}
           className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 focus:border-gray-600 focus:outline-none"
         />
