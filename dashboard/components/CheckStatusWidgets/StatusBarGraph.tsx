@@ -15,11 +15,11 @@ export default function StatusBarGraph({ successStatuses, timestamps }: StatusBa
     <div className="mt-2">
       <div className="flex h-4 gap-0.5">
         {recentStatuses.map((status, index) => (
-          <div key={index} className="relative flex-1 group">
+          <div key={index} className="relative flex-1 group focus:outline-none" tabIndex={0}>
             <div
               className={`w-full h-4 rounded-sm ${status ? 'bg-green-500' : 'bg-red-500'}`}
             />
-            <div className="absolute top-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap px-2 py-1 text-sm text-white bg-gray-950 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+            <div className="absolute top-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap px-2 py-1 text-sm text-white bg-gray-950 rounded opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity pointer-events-none z-10">
               {formatDateTime(recentTimestamps[index])}
             </div>
           </div>
