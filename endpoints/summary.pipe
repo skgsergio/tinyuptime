@@ -1,5 +1,5 @@
 DESCRIPTION >
-    Retrieve a summary of the statuses per group for active checks in the last hour for active checks in the last hour
+    Retrieve a summary of the statuses per group for active checks
 
 TOKEN "endpoint_unscoped" READ
 TOKEN "public_dashboard_summary" READ
@@ -24,7 +24,7 @@ SQL >
                 toUnixTimestamp(max(timestamp)) AS last_check_timestamp,
                 argMax(success, timestamp) AS success
             FROM results
-            WHERE timestamp >= now() - INTERVAL 1 HOUR
+            WHERE timestamp >= now() - INTERVAL 30 MINUTE
             GROUP BY check_name, scope
             ORDER BY check_name
         )
