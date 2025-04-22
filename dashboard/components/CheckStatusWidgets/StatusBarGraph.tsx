@@ -1,6 +1,6 @@
 'use client';
 
-import { formatDateTime } from '@/lib/dateUtils';
+import { formatDateTime, formatHour } from '@/lib/dateUtils';
 
 interface StatusBarGraphProps {
   successStatuses: boolean[];
@@ -15,20 +15,19 @@ export default function StatusBarGraph({ successStatuses, timestamps }: StatusBa
     <div className="mt-2">
       <div className="flex h-4 gap-0.5">
         {recentStatuses.map((status, index) => (
-          <div
-            key={index}
-            className={`flex-1 rounded-sm ${
-              status ? 'bg-green-500' : 'bg-red-500'
-            }`}
-            title={`${formatDateTime(recentTimestamps[index])} - ${
-              status ? 'Success' : 'Failed'
-            }`}
-          />
+          <div key={index} className="relative flex-1 group">
+            <div
+              className={`w-full h-4 rounded-sm ${status ? 'bg-green-500' : 'bg-red-500'}`}
+            />
+            <div className="absolute top-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap px-2 py-1 text-sm text-white bg-gray-950 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+              {formatDateTime(recentTimestamps[index])}
+            </div>
+          </div>
         ))}
       </div>
-      <div className="flex justify-between text-xs text-gray-300 mt-1 font-mono">
-        <span>{formatDateTime(recentTimestamps[0])}</span>
-        <span>{formatDateTime(recentTimestamps[recentTimestamps.length - 1])}</span>
+      <div className="flex justify-between text-sm text-gray-300 mt-1 font-mono">
+        <span>{formatHour(recentTimestamps[0])}</span>
+        <span>{formatHour(recentTimestamps[recentTimestamps.length - 1])}</span>
       </div>
     </div>
   );

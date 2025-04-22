@@ -10,3 +10,12 @@ export const formatDateTime = (timestamp: number) => {
     timeZone: process.env.NEXT_PUBLIC_TIMEZONE || 'Etc/UTC'
   });
 };
+
+export const formatHour = (timestamp: number) => {
+  return new Date(timestamp * 1000).toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: process.env.NEXT_PUBLIC_TIMEZONE || 'Etc/UTC'
+  });
+};
