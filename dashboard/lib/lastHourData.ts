@@ -10,7 +10,7 @@ export interface LastHourData {
 export async function fetchLastHourData(): Promise<LastHourData[]> {
   const response = await fetch(
     `${process.env.TINYBIRD_TINYUPTIME_HOST}/v0/pipes/last_hour.json?token=${process.env.TINYBIRD_TINYUPTIME_LAST_HOUR_TOKEN}`,
-    { next: { revalidate: 300 } }
+    { next: { revalidate: 150 } }
   );
 
   if (!response.ok) {
