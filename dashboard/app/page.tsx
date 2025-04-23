@@ -4,6 +4,8 @@ import SummaryTable from '@/components/SummaryTable';
 import SummaryWidgets from '@/components/SummaryWidgets';
 import CheckStatusWidgets from '@/components/CheckStatusWidgets';
 import PageRefresh from '@/components/PageRefresh';
+import SummaryGraph from '@/components/SummaryGraph';
+import FailingChecksGraph from '@/components/SummaryGraph';
 
 export default function Home() {
   return (
@@ -30,6 +32,7 @@ export default function Home() {
         <SummaryWidgets />
         <SummaryTable />
       </div>
+      <SummaryGraph />
       <h2 className="text-2xl font-bold mb-4 text-white">Check Status</h2>
       <div className="mb-6">
         <CheckStatusWidgets />

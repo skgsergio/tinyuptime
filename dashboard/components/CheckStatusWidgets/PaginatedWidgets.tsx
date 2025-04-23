@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import StatusBarGraph from './StatusBarGraph';
 import { FirstIcon, PreviousIcon, NextIcon, LastIcon } from '@/components/Icons/Pagination';
-import { LastHourData } from '@/lib/lastHourData';
+import { LastHourData } from '@/lib/fetchData';
 
 
 export default function PaginatedWidgets({ checkStatuses }: { checkStatuses: LastHourData[] }) {

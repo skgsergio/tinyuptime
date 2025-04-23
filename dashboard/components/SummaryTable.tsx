@@ -1,5 +1,5 @@
 import { formatDateTime } from '@/lib/dateUtils';
-import { SummaryData, fetchSummaryData } from '@/lib/summaryData';
+import { SummaryData, fetchSummaryData } from '@/lib/fetchData';
 
 export default async function SummaryTable() {
   try {
