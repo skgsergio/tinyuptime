@@ -10,7 +10,10 @@ SCHEMA >
     `verify_ssl` Nullable(Bool) `json:$.verify_ssl`,
     `timeout_seconds` Nullable(Int16) `json:$.timeout_seconds`,
     `interval_seconds` Nullable(Int16) `json:$.interval_seconds`,
-    `scope` String DEFAULT 'public' `json:$.scope`
+    `hide_details` Bool `json:$.hide_details`
 
 ENGINE MergeTree
 ENGINE_SORTING_KEY name, url
+
+FORWARD_QUERY >
+  SELECT name, url, host, accepted_statuses, keyword, verify_ssl, timeout_seconds, interval_seconds, if(scope = 'public', false, true) AS hide_details

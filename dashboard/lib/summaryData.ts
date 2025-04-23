@@ -9,7 +9,7 @@ export interface SummaryData {
 
 export async function fetchSummaryData(): Promise<SummaryData[]> {
   const response = await fetch(
-    `${process.env.TINYBIRD_TINYUPTIME_HOST}/v0/pipes/summary.json?token=${process.env.TINYBIRD_TINYUPTIME_SUMMARY_TOKEN}`,
+    `${process.env.TINYBIRD_TINYUPTIME_HOST}/v0/pipes/current_summary.json?token=${process.env.TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`,
     { next: { revalidate: 150 } }
   );
 

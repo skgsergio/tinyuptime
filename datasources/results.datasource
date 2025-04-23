@@ -8,8 +8,11 @@ SCHEMA >
     `http_status` Nullable(Int16),
     `duration_seconds` Nullable(Float32),
     `error` Nullable(String),
-    `scope` String
+    `hide_details` Bool
 
 ENGINE MergeTree
 ENGINE_PARTITION_KEY toYYYYMM(timestamp)
-ENGINE_SORTING_KEY timestamp, check_name, success, scope
+ENGINE_SORTING_KEY timestamp, check_name, success, hide_details
+
+FORWARD_QUERY >
+  SELECT timestamp, check_name, success, http_status, duration_seconds, error, if(scope = 'public', false, true) AS hide_details

@@ -1,2 +1,0 @@
-{"name": "Sample - 1.2.3.4", "url": "https://1.2.3.4", "accepted_statuses": [200, 202], "host_header": "patat.as", "keyword": "frita", "verify_ssl": false, "timeout_seconds": 5, "interval_seconds": 120}
-{"name": "Sample - 2.3.4.5", "url": "http://2.3.4.5", "private": true}

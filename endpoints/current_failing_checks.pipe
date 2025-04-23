@@ -1,8 +1,7 @@
 DESCRIPTION >
     Retrieve checks which its last result was not successful for active checks in the last hour
 
-TOKEN "endpoint_unscoped" READ
-TOKEN "public_dashboard_failing_checks" READ
+TOKEN "public_dashboard" READ
 
 NODE failing_checks_for_active_checks
 SQL >
@@ -10,14 +9,15 @@ SQL >
     FROM (
         SELECT
             check_name AS check,
-            argMax(scope, timestamp) AS scope,
             toUnixTimestamp(max(timestamp)) AS last_check_timestamp,
             argMax(success, timestamp) AS success,
             argMax(ifNull(http_status, NaN), timestamp) AS http_status,
             argMax(ifNull(duration_seconds, NaN), timestamp) AS duration_seconds,
             argMax(ifNull(error, ''), timestamp) AS error
         FROM results
-        WHERE timestamp >= now() - INTERVAL 1 HOUR
+        WHERE
+            timestamp >= now() - INTERVAL 1 HOUR
+            AND hide_details = false
         GROUP BY check_name
     )
     WHERE success = false
