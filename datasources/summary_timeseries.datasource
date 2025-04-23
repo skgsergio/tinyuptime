@@ -4,9 +4,9 @@ DESCRIPTION >
 SCHEMA >
     `timestamp` DateTime `json:$.timestamp`,
     `group_name` String `json:$.group_name`,
-    `successful_checks` UInt32 `json:$.successful_checks`,
-    `failing_checks` UInt32 `json:$.failing_checks`,
-    `total_checks` UInt32 `json:$.total_checks`
+    `successful_checks` UInt64 `json:$.successful_checks`,
+    `failing_checks` UInt64 `json:$.failing_checks`,
+    `total_checks` UInt64 `json:$.total_checks`
 
 ENGINE MergeTree
 ENGINE_PARTITION_KEY toYYYYMM(timestamp)
