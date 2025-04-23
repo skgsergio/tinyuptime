@@ -1,0 +1,36 @@
+DESCRIPTION >
+    Summary of checks per check group, updated every 10 minutes
+
+NODE check_summary_by_group
+SQL >
+    %
+    SELECT
+        toStartOfTenMinutes(toDateTime({{ DateTime(job_timestamp) }})) AS timestamp,
+        CASE
+            WHEN length(splitByString(' - ', check)) == 2
+            THEN splitByString(' - ', check)[1]
+            ELSE 'Ungrouped'
+        END AS group_name,
+        countIf(success = true) AS successful_checks,
+        countIf(success = false) AS failing_checks,
+        count() AS total_checks
+    FROM
+        (
+            SELECT
+                check_name AS check,
+                argMax(success, timestamp) AS success
+            FROM results
+            WHERE
+                timestamp
+                    BETWEEN toStartOfTenMinutes(toDateTime({{ DateTime(job_timestamp) }})) - INTERVAL 10 MINUTE
+                    AND toStartOfTenMinutes(toDateTime({{ DateTime(job_timestamp) }}))
+            GROUP BY check_name
+            ORDER BY check_name
+        )
+    GROUP BY group_name
+    ORDER BY group_name
+
+TYPE COPY
+TARGET_DATASOURCE summary_timeseries
+COPY_SCHEDULE */10 * * * *
+COPY_MODE append

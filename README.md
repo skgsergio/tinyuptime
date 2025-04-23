@@ -9,12 +9,12 @@ The results are sent to [Tinybird](https://tinybird.co).
 
 ### Overview
 
-This project uses Tinybird to store and analyze uptime check results. It allows you to configure and monitor website/service status checks, providing summaries, status reports, and detailed check information.
+This project uses Tinybird to store and analyze uptime check results. It allows you to monitor website and service availability by configuring regular status checks, and provides data analysis endpoints to retrieve check summaries, status reports, and detailed check information.
 
 ### Data sources
 
 #### `checks`
-Stores the configuration for uptime checks.
+Stores the configuration for uptime checks including URLs, accepted status codes, and monitoring parameters.
 
 ```shell
 curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=checks" \
@@ -23,7 +23,7 @@ curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=checks" \
 ```
 
 #### `results_landing`
-Landing data source for incoming check results.
+Landing data source for incoming check results before they are processed.
 
 ```shell
 curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=results_landing" \
@@ -32,7 +32,16 @@ curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=results_la
 ```
 
 #### `results`
-Materialized check results with added scope information from the checks datasource.
+Materialized check results from results_landing with added scope information from the checks datasource.
+
+#### `summary_timeseries`
+Stores timeseries data of check summaries per check group, updated every 10 minutes.
+
+```shell
+curl -X POST "https://api.europe-west2.gcp.tinybird.co/v0/events?name=summary_timeseries" \
+    -H "Authorization: Bearer $TB_ADMIN_TOKEN" \
+    -d '{"timestamp":"2023-06-01 12:00:00","group_name":"API Services","successful_checks":10,"failing_checks":2,"total_checks":12}'
+```
 
 ### Endpoints
 
@@ -44,7 +53,7 @@ curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/checks_config.jso
 ```
 
 #### `summary`
-Provides a summary of status checks grouped by check group for the last hour.
+Provides a summary of check statuses grouped by check group for the last 30 minutes.
 
 ```shell
 curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/summary.json?token=$TB_ADMIN_TOKEN"
@@ -58,15 +67,22 @@ curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/last_status.json?
 ```
 
 #### `last_hour`
-Retrieves detailed check results for the last hour.
+Retrieves detailed check results for the last hour, including timestamps, success statuses, and durations.
 
 ```shell
 curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/last_hour.json?token=$TB_ADMIN_TOKEN"
 ```
 
 #### `failing_checks`
-Lists all checks that are currently failing.
+Lists all checks that are currently failing based on their most recent result.
 
 ```shell
 curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/failing_checks.json?token=$TB_ADMIN_TOKEN"
+```
+
+#### `update_summary_timeseries`
+Updates the summary_timeseries datasource with check summaries grouped by check group every 10 minutes.
+
+```shell
+curl -X GET "https://api.europe-west2.gcp.tinybird.co/v0/pipes/update_summary_timeseries.json?token=$TB_ADMIN_TOKEN&job_timestamp=2023-06-01 12:00:00"
 ```
