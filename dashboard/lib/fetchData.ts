@@ -52,9 +52,9 @@ export interface SummaryTimeseriesPointData {
   total_checks: number;
 }
 
-export async function fetchSummaryTimeseriesData(): Promise<SummaryTimeseriesPointData[]> {
+export async function fetchSummaryTimeseriesData(interval: string = '1d'): Promise<SummaryTimeseriesPointData[]> {
   const response = await fetch(
-    `${process.env.TINYBIRD_TINYUPTIME_HOST}/v0/pipes/summaries_timeseries.json?interval=1d&token=${process.env.TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`,
+    `${process.env.TINYBIRD_TINYUPTIME_HOST}/v0/pipes/summaries_timeseries.json?interval=${interval}&token=${process.env.TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`,
     { next: { revalidate: REVALIDATE_SECONDS } }
   );
   

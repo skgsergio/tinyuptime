@@ -11,6 +11,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import IntervalButtons from "./IntervalButtons";
 
 export default function SummaryGraph({ data }: { data: SummaryTimeseriesPointData[] }) {
   if (!data || !data.length)
@@ -49,6 +50,7 @@ export default function SummaryGraph({ data }: { data: SummaryTimeseriesPointDat
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
       <h3 className="text-lg font-semibold text-gray-300 mb-2">Failing Checks Over Time</h3>
+      <IntervalButtons />
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData} margin={{ top: 16, right: 32, left: 0, bottom: 4 }}>
           <XAxis
@@ -80,7 +82,7 @@ export default function SummaryGraph({ data }: { data: SummaryTimeseriesPointDat
           {groupNames.map((group, idx) => (
             <Line
               key={group}
-              type="monotone"
+              type="linear"
               dataKey={group}
               stroke={palette[idx % palette.length]}
               strokeWidth={2}

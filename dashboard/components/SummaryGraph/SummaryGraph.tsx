@@ -1,9 +1,10 @@
 import Graph from './Graph';
 import { fetchSummaryTimeseriesData } from '@/lib/fetchData';
 
-export default async function CheckStatusWidgets() {
+export default async function CheckStatusWidgets({ searchParams }: { searchParams?: { [key: string]: string } }) {
   try {
-    const data = await fetchSummaryTimeseriesData();
+    const interval = (await searchParams)?.interval || undefined;
+    const data = await fetchSummaryTimeseriesData(interval);
 
     return <Graph data={data} />;
   } catch (error) {
