@@ -1,12 +1,13 @@
 import Graph from './Graph';
 import { fetchSummaryTimeseriesData } from '@/lib/fetchData';
 
-export default async function CheckStatusWidgets({ searchParams }: { searchParams?: { [key: string]: string } }) {
-  try {
-    const interval = (await searchParams)?.interval || undefined;
-    const data = await fetchSummaryTimeseriesData(interval);
+export default async function SummaryGraph({ interval }: { interval: string | undefined }) {
+  const currentInterval = interval || "1d";
 
-    return <Graph data={data} />;
+  try {
+    const data = await fetchSummaryTimeseriesData(currentInterval);
+
+    return <Graph data={data} currentInterval={currentInterval} />;
   } catch (error) {
     return <div className="text-red-500">Error: {error instanceof Error ? error.message : 'An error occurred'}</div>;
   }

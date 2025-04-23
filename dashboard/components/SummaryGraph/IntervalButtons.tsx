@@ -4,10 +4,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 const intervals = ["6h", "12h", "1d", "7d", "14d"];
 
-export default function IntervalButtons() {
+export default function IntervalButtons({ currentInterval }: { currentInterval: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const current = searchParams.get("interval") || "1d";
 
   function setIntervalParam(interval: string) {
     const params = new URLSearchParams(Array.from(searchParams.entries()));
@@ -27,11 +26,11 @@ export default function IntervalButtons() {
             onClick={() => setIntervalParam(interval)}
             className={
               `${classes} border border-slate-700 px-3 py-1 font-mono text-sm shadow-md ` +
-              (current === interval
+              (currentInterval === interval
                 ? "bg-gray-800 text-white"
                 : "bg-gray-900 hover:bg-gray-800 hover:shadow-lg")
             }
-            aria-pressed={current === interval}
+            aria-pressed={currentInterval === interval}
           >
             {interval}
           </button>

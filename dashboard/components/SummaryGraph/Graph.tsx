@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import IntervalButtons from "./IntervalButtons";
 
-export default function SummaryGraph({ data }: { data: SummaryTimeseriesPointData[] }) {
+export default function SummaryGraph({ data, currentInterval }: { data: SummaryTimeseriesPointData[]; currentInterval: string }) {
   if (!data || !data.length)
     return (
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center text-gray-400 mb-8">
@@ -27,7 +27,8 @@ export default function SummaryGraph({ data }: { data: SummaryTimeseriesPointDat
 
   // Create chart data: one object per timestamp, each with group_name: failing_checks
   const chartData = timestamps.map((ts) => {
-    const entry: any = { timestamp: ts };
+    const entry: { timestamp: number; [key: string]: number } = { timestamp: ts };
+    
     groupNames.forEach((group) => {
       const found = data.find((d) => d.timestamp === ts && d.group_name === group);
       entry[group] = found ? found.failing_checks : 0;
@@ -50,7 +51,7 @@ export default function SummaryGraph({ data }: { data: SummaryTimeseriesPointDat
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
       <h3 className="text-lg font-semibold text-gray-300 mb-2">Failing Checks Over Time</h3>
-      <IntervalButtons />
+      <IntervalButtons currentInterval={currentInterval} />
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData} margin={{ top: 16, right: 32, left: 0, bottom: 4 }}>
           <XAxis
@@ -71,7 +72,7 @@ export default function SummaryGraph({ data }: { data: SummaryTimeseriesPointDat
             wrapperClassName="rounded font-mono text-sm"
             contentStyle={{ backgroundColor: "var(--color-gray-950)", color: "var(--color-white)", border: undefined }}
             labelFormatter={(ts) => `Time : ${formatHour(Number(ts))}`}
-            formatter={(value: any, name: string) => [value, name]}
+            formatter={(value: number, name: string) => [value, name]}
           />
           <Legend
             iconType="line"
