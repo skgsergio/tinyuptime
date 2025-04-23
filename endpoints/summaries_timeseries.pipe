@@ -6,12 +6,33 @@ TOKEN "public_dashboard" READ
 NODE summary_timeseries
 SQL >
     %
+    {% set _hours = 23 %}
+    {% if defined(interval) %}
+        {% if interval == "1h" %}
+            {% set _hours = 1 %}
+        {% elif interval == "3h" %}
+            {% set _hours = 3 %}
+        {% elif interval == "6h" %}
+            {% set _hours = 6 %}
+        {% elif interval == "12h" %}
+            {% set _hours = 12 %}
+        {% elif interval == "1d" %}
+            {% set _hours = 24 %}
+        {% elif interval == "2d" %}
+            {% set _hours = 48 %}
+        {% elif interval == "7d" %}
+            {% set _hours = 168 %}
+        {% elif interval == "14d" %}
+            {% set _hours = 336 %}
+        {% end %}
+    {% end %}
     SELECT
         toUnixTimestamp(s.timestamp) AS timestamp,
         * EXCEPT timestamp
     FROM summaries s
     WHERE
-        s.timestamp BETWEEN {{ DateTime(date_from) }} AND {{ DateTime(date_to) }}
+        s.timestamp
+        BETWEEN now() - INTERVAL {{ _hours }} HOUR AND now()
     ORDER BY timestamp ASC
 
 TYPE ENDPOINT
