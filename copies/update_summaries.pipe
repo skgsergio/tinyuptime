@@ -31,6 +31,6 @@ SQL >
     ORDER BY group_name
 
 TYPE COPY
-TARGET_DATASOURCE summary_timeseries
+TARGET_DATASOURCE summaries
 COPY_SCHEDULE */10 * * * *
 COPY_MODE append
