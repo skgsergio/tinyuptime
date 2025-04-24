@@ -97,7 +97,7 @@ export default function SummaryGraph() {
       <h3 className="text-lg font-semibold text-gray-300 mb-2">Failing Checks Over Time</h3>
       <IntervalButtons currentInterval={currentInterval} setIntervalParam={setIntervalParam} />
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={chartData} margin={{ top: 16, right: 32, left: 0, bottom: 4 }}>
+        <LineChart data={chartData} margin={{ right: 25 }}>
           <XAxis
             className="text-sm font-mono fill-gray-300"
             stroke="var(--color-gray-300)"
@@ -109,6 +109,7 @@ export default function SummaryGraph() {
           />
           <YAxis
             className="text-sm font-mono fill-gray-300"
+            width={45}
             stroke="var(--color-gray-300)"
             allowDecimals={false}
           />
