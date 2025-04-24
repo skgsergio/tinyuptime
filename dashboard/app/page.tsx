@@ -1,4 +1,4 @@
-import { MainContainer } from '@/app/layout';
+import { MainContainer } from '@/components/MainContainer';
 
 import TinybirdLogo from '@/components/Icons/TinybirdLogo';
 import GitHubLogo from '@/components/Icons/GitHubLogo';

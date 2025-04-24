@@ -1,4 +1,4 @@
-import { MainContainer } from '@/app/layout';
+import { MainContainer } from '@/components/MainContainer';
 
 import CheckStatusWidgets from '@/components/CheckStatusWidgets';
 
