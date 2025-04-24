@@ -7,7 +7,7 @@ import PageRefresh from '@/components/PageRefresh';
 
 import { SummaryDataProvider } from '@/contexts/SummaryDataContext';
 import SummaryTable from '@/components/SummaryTable';
-import SummaryWidgets from '@/components/SummaryWidgets/SummaryWidgets';
+import SummaryWidgets from '@/components/SummaryWidgets';
 import SummaryGraph from '@/components/SummaryGraph';
 
 export default function Home() {
