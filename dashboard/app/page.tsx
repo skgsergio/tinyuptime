@@ -1,16 +1,18 @@
+import { MainContainer } from '@/app/layout';
+
 import TinybirdLogo from '@/components/Icons/TinybirdLogo';
 import GitHubLogo from '@/components/Icons/GitHubLogo';
-import SummaryTable from '@/components/SummaryTable';
-import SummaryWidgets from '@/components/SummaryWidgets';
-import CheckStatusWidgets from '@/components/CheckStatusWidgets';
+
 import PageRefresh from '@/components/PageRefresh';
+
+import { SummaryDataProvider } from '@/contexts/SummaryDataContext';
+import SummaryTable from '@/components/SummaryTable';
+import SummaryWidgets from '@/components/SummaryWidgets/SummaryWidgets';
 import SummaryGraph from '@/components/SummaryGraph';
 
-export default async function Home(props: { searchParams: Promise<{ [key: string]: string }> }) {
-  const searchParams = await props.searchParams;
-
+export default function Home() {
   return (
-    <main className="container mx-auto p-4 min-h-screen">
+    <MainContainer>
       <div className="text-center mb-2">
         <PageRefresh />
       </div>
@@ -30,14 +32,12 @@ export default async function Home(props: { searchParams: Promise<{ [key: string
       </div>
       <h2 className="text-2xl font-bold mb-4 text-white">Summary</h2>
       <div className="mb-6">
-        <SummaryWidgets />
-        <SummaryTable />
+      <SummaryDataProvider>
+          <SummaryWidgets />
+          <SummaryTable />
+      </SummaryDataProvider>
       </div>
-      <SummaryGraph interval={searchParams.interval} />
-      <h2 className="text-2xl font-bold mb-4 text-white">Check Status</h2>
-      <div className="mb-6">
-        <CheckStatusWidgets />
-      </div>
-    </main>
+      <SummaryGraph />
+    </MainContainer>
   );
 }

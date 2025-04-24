@@ -6,8 +6,7 @@ export const formatDateTime = (timestamp: number) => {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
-    timeZoneName: 'short',
-    timeZone: process.env.NEXT_PUBLIC_TIMEZONE || 'Etc/UTC'
+    timeZoneName: 'short'
   });
 };
 
@@ -15,7 +14,6 @@ export const formatHour = (timestamp: number) => {
   return new Date(timestamp * 1000).toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false,
-    timeZone: process.env.NEXT_PUBLIC_TIMEZONE || 'Etc/UTC'
+    hour12: false
   });
 };

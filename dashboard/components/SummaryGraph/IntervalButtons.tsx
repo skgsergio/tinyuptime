@@ -1,19 +1,8 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-
 const intervals = ["6h", "12h", "1d", "7d", "14d"];
 
-export default function IntervalButtons({ currentInterval }: { currentInterval: string }) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  function setIntervalParam(interval: string) {
-    const params = new URLSearchParams(Array.from(searchParams.entries()));
-    params.set("interval", interval);
-    router.replace(`?${params.toString()}`);
-  }
-
+export default function IntervalButtons({ currentInterval, setIntervalParam }: { currentInterval: string, setIntervalParam: (interval: string) => void }) {
   return (
     <div className="row flex mb-4 justify-end">
       {intervals.map((interval, idx) => {
