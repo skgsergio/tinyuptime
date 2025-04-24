@@ -18,7 +18,7 @@ SQL >
         (
             SELECT
                 check_name AS check,
-                argMax(success, timestamp) AS success
+                min(success) AS success
             FROM results
             WHERE
                 timestamp
