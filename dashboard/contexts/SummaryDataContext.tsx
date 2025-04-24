@@ -2,6 +2,9 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
+import { useTimer } from '@/contexts/TimerContext';
+
+
 export interface SummaryData {
   group_name: string;
   successful_checks: number;
@@ -30,6 +33,7 @@ export const SummaryDataProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<SummaryData[] | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { reloadDate } = useTimer();
 
   useEffect(() => {
     const fetchData = () => {
@@ -54,9 +58,7 @@ export const SummaryDataProvider = ({ children }: { children: ReactNode }) => {
     };
 
     fetchData();
-    const refreshInterval = setInterval(fetchData, 300000);
-    return () => clearInterval(refreshInterval);
-  }, []);
+  }, [reloadDate]);
 
   return (
     <SummaryDataContext.Provider value={{ data, loading, error }}>

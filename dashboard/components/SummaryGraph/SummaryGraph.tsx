@@ -14,6 +14,7 @@ import {
 
 import { ErrorMessage, NoDataMessage } from '@/components/Messages';
 import { formatDateTime, formatHour } from "@/lib/dateUtils";
+import { useTimer } from '@/contexts/TimerContext';
 
 import IntervalButtons from "./IntervalButtons";
 
@@ -30,6 +31,7 @@ export default function SummaryGraph() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentInterval, setIntervalParam] = useState('1d');
+  const { reloadDate } = useTimer();
 
   useEffect(() => {
     const fetchData = (showLoading: boolean) => {
@@ -53,11 +55,8 @@ export default function SummaryGraph() {
         });
     };
 
-    
     fetchData(true);
-    const refreshInterval = setInterval(() => fetchData(false), 300000);
-    return () => clearInterval(refreshInterval);
-  }, [currentInterval]);
+  }, [currentInterval, reloadDate]);
 
   if (loading) return (
     <div className="rounded-lg shadow-lg bg-gray-800 h-110 animate-pulse"></div>
