@@ -1,6 +1,7 @@
 'use client';
 
 import { useTimer } from '@/contexts/TimerContext';
+import RefreshIcon from '@/components/Icons/RefreshIcon';
 
 export default function PageRefresh() {
   const { timeLeft } = useTimer();
@@ -11,10 +12,10 @@ export default function PageRefresh() {
 
   return (
     <span
-      className="fixed top-4 right-4 z-50 text-sm text-gray-300 bg-gray-800 bg-opacity-80 px-3 py-1 rounded-full font-mono shadow-lg border border-gray-700 border-1px"
+      className="fixed bottom-2 right-4 z-50 text-sm text-gray-300 bg-gray-800 px-3 py-1 rounded-full font-mono shadow-lg border border-gray-700 border-1px"
       style={{ pointerEvents: 'none' }}
     >
-      Refreshing in {formattedTime}
+      <RefreshIcon className="inline-block" /> {formattedTime}
     </span>
   );
 }
