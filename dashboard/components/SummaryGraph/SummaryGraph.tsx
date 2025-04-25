@@ -12,11 +12,11 @@ import {
   ResponsiveContainer 
 } from "recharts";
 
-import { ErrorMessage, NoDataMessage } from '@/components/Messages';
 import { formatDateTime, formatHour } from "@/lib/dateUtils";
 import { useTimer } from '@/contexts/TimerContext';
 
 import IntervalButtons from "./IntervalButtons";
+import Container from './Container';
 
 export interface SummaryTimeseriesPointData {
   timestamp: number;
@@ -58,11 +58,9 @@ export default function SummaryGraph() {
     fetchData(true);
   }, [currentInterval, reloadDate]);
 
-  if (loading) return (
-    <div className="rounded-lg shadow-lg bg-gray-800 h-110 animate-pulse"></div>
-  );
-  if (error) return <ErrorMessage error={error} />;
-  if (!data || data.length === 0) return <NoDataMessage />;
+  if (loading) return <Container className="animate-pulse"></Container>;
+  if (error) return <Container className="text-red-400">{error}</Container>;
+  if (!data || data.length === 0) return <Container>No data available</Container>;
 
   // Group data by timestamp
   const timestamps = Array.from(new Set(data.map((d) => d.timestamp))).sort();
@@ -92,7 +90,7 @@ export default function SummaryGraph() {
   ];
 
   return (
-    <div className="rounded-lg shadow-lg bg-gray-800 mb-6 p-6 h-110">
+    <Container>
       <h3 className="text-lg font-semibold text-gray-300 mb-2">Failing Checks Over Time</h3>
       <IntervalButtons currentInterval={currentInterval} setIntervalParam={setIntervalParam} />
       <ResponsiveContainer width="100%" height={300}>
@@ -138,7 +136,7 @@ export default function SummaryGraph() {
           ))}
         </LineChart>
       </ResponsiveContainer>
-    </div>
+    </Container>
   );
 }
 

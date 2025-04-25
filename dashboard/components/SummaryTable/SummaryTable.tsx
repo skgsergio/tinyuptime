@@ -1,21 +1,19 @@
 'use client';
 
-import { ErrorMessage, NoDataMessage } from '@/components/Messages';
 import { SummaryData, useSummaryData } from '@/contexts/SummaryDataContext';
 import { formatDateTime } from '@/lib/dateUtils';
+import Container from './Container';
 
 export default function SummaryTable() {
   const { data, loading, error } = useSummaryData();
 
-  if (loading) return (
-    <div className="rounded-lg shadow-lg bg-gray-800 h-90 animate-pulse"></div>
-  );
-  if (error) return <ErrorMessage error={error} />;
-  if (!data || data.length === 0) return <NoDataMessage />;
+  if (loading) return <Container className="animate-pulse"></Container>;
+  if (error) return <Container className="p-6 text-red-400">{error}</Container>;
+  if (!data || data.length === 0) return <Container className="p-6">No data available</Container>;
     
   return (
-    <div className="overflow-x-auto rounded-lg shadow-lg">
-      <table className="min-w-full bg-gray-800">
+    <Container className="overflow-x-auto">
+      <table className="min-w-full">
         <thead className="bg-gray-700">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
@@ -59,6 +57,6 @@ export default function SummaryTable() {
           ))}
         </tbody>
       </table>
-    </div>
+    </Container>
   );
 }
