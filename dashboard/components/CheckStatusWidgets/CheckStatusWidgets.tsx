@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 import { FirstIcon, PreviousIcon, NextIcon, LastIcon } from '@/components/Icons/Pagination';
-import { ErrorMessage, NoDataMessage } from '@/components/Messages';
+import { ErrorMessage, NoDataMessage } from './Messages';
 
 import StatusBarGraph from './StatusBarGraph';
 
