@@ -14,7 +14,7 @@ import { TimerProvider } from '@/contexts/TimerContext';
 export default function Home() {
   return (
     <MainContainer>
-      <TimerProvider interval={5 * 60 * 1000}>
+      <TimerProvider interval={0.1 * 60 * 1000}>
         <div className="text-center mb-2">
           <PageRefresh />
         </div>

@@ -15,7 +15,7 @@ export interface SummaryData {
 
 interface SummaryDataContextType {
   data: SummaryData[] | undefined;
-  loading: boolean;
+  firstLoad: boolean;
   error: string | null;
 }
 
@@ -32,12 +32,11 @@ export const useSummaryData = () => {
 export const SummaryDataProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<SummaryData[] | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [firstLoad, setFirstLoad] = useState(true);
   const { reloadDate } = useTimer();
 
   useEffect(() => {
     const fetchData = () => {
-      setLoading(true);
       fetch(
         `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/current_summary.json?token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`
       )
@@ -49,11 +48,11 @@ export const SummaryDataProvider = ({ children }: { children: ReactNode }) => {
         })
         .then((json) => {
           setData(json.data);
-          setLoading(false);
+          setFirstLoad(false);
         })
         .catch((err) => {
           setError(err.message);
-          setLoading(false);
+          setFirstLoad(false);
         });
     };
 
@@ -61,7 +60,7 @@ export const SummaryDataProvider = ({ children }: { children: ReactNode }) => {
   }, [reloadDate]);
 
   return (
-    <SummaryDataContext.Provider value={{ data, loading, error }}>
+    <SummaryDataContext.Provider value={{ data, firstLoad, error }}>
       {children}
     </SummaryDataContext.Provider>
   );

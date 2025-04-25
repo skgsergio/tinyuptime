@@ -29,13 +29,12 @@ export interface SummaryTimeseriesPointData {
 export default function SummaryGraph() {
   const [data, setData] = useState<SummaryTimeseriesPointData[] | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [firstLoad, setFirstLoad] = useState(true);
   const [currentInterval, setIntervalParam] = useState('1d');
   const { reloadDate } = useTimer();
 
   useEffect(() => {
-    const fetchData = (showLoading: boolean) => {
-      if (showLoading) setLoading(true);  
+    const fetchData = () => {
       fetch(
         `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/summaries_timeseries.json?interval=${currentInterval}&token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`
       )
@@ -47,18 +46,18 @@ export default function SummaryGraph() {
         })
         .then((json) => {
           setData(json.data);
-          setLoading(false);
+          setFirstLoad(false);
         })
         .catch((err) => {
           setError(err.message);
-          setLoading(false);
+          setFirstLoad(false);
         });
     };
 
-    fetchData(true);
+    fetchData();
   }, [currentInterval, reloadDate]);
 
-  if (loading) return <Container className="animate-pulse"></Container>;
+  if (firstLoad) return <Container className="animate-pulse"></Container>;
   if (error) return <Container className="text-red-400">{error}</Container>;
   if (!data || data.length === 0) return <Container>No data available</Container>;
 

@@ -7,9 +7,9 @@ import WidgetCapsule from './WidgetCapsule';
 import Widget from './Widget';
 
 export default function SummaryWidgets() {
-  const { data, loading, error } = useSummaryData();
+  const { data, firstLoad, error } = useSummaryData();
 
-  if (loading) return (
+  if (firstLoad) return (
     <Container>
       <WidgetCapsule className="animate-pulse" />
       <WidgetCapsule className="animate-pulse" />

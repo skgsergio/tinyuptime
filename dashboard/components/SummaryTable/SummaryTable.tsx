@@ -5,9 +5,9 @@ import { formatDateTime } from '@/lib/dateUtils';
 import Container from './Container';
 
 export default function SummaryTable() {
-  const { data, loading, error } = useSummaryData();
+  const { data, firstLoad, error } = useSummaryData();
 
-  if (loading) return <Container className="animate-pulse"></Container>;
+  if (firstLoad) return <Container className="animate-pulse"></Container>;
   if (error) return <Container className="p-6 text-red-400">{error}</Container>;
   if (!data || data.length === 0) return <Container className="p-6">No data available</Container>;
     
