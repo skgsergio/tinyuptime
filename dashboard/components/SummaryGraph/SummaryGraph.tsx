@@ -9,7 +9,8 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  ResponsiveContainer 
+  ResponsiveContainer, 
+  CartesianGrid
 } from "recharts";
 
 import { formatDateTime, formatHour } from "@/lib/dateUtils";
@@ -108,6 +109,10 @@ export default function SummaryGraph() {
             width={45}
             stroke="var(--color-gray-300)"
             allowDecimals={false}
+          />
+          <CartesianGrid
+            stroke="var(--color-gray-700)"
+            strokeDasharray="4"
           />
           <Tooltip
             wrapperClassName="rounded font-mono text-sm"
