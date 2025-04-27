@@ -79,7 +79,12 @@ export default function SummaryGraph() {
           return response.json();
         })
         .then((json) => {
-          setMarkers(json.data);
+          //remove duplicated json.data entries
+          const uniqueMarkers = json.data.filter((marker: MarkerTimeseriesPointData, index: number) => {
+            return json.data.findIndex((m: MarkerTimeseriesPointData) => m.start === marker.start && m.end === marker.end && m.name === marker.name) === index;
+          });
+
+          setMarkers(uniqueMarkers);
         })
         .catch((err) => {
           setError(err.message);
@@ -128,70 +133,87 @@ export default function SummaryGraph() {
   ];
 
   return (
-    <Container>
-      <h3 className="text-lg font-semibold text-gray-300 mb-2">Failing Checks Over Time</h3>
-      <IntervalButtons currentInterval={currentInterval} setIntervalParam={setIntervalParam} />
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={chartData} margin={{ right: 25 }}>
-          <XAxis
-            className="text-sm font-mono fill-gray-300"
-            stroke="var(--color-gray-300)"
-            dataKey="timestamp"
-            tickCount={10}
-            tickFormatter={formatHour}
-            scale="time"
-            minTickGap={50}
-          />
-          <YAxis
-            className="text-sm font-mono fill-gray-300"
-            width={45}
-            stroke="var(--color-gray-300)"
-            allowDecimals={false}
-          />
-          <CartesianGrid
-            stroke="var(--color-gray-700)"
-            strokeDasharray="4"
-          />
-          <Tooltip
-            wrapperClassName="rounded font-mono text-sm"
-            labelClassName="font-bold pb-2"
-            contentStyle={{ backgroundColor: "var(--color-gray-950)", color: "var(--color-white)", border: undefined }}
-            labelFormatter={(ts) => formatDateTime(ts) }
-            formatter={(value: number, name: string) => [value, name]}
-          />
-          <Legend
-            iconType="line"
-            formatter={(value, entry, idx) => (
-              <span className="text-sm font-mono" style={{ color: palette[idx % palette.length] }}>{value}</span>
-            )}
-          />
-          {Object.entries(uniqueMarkers).map(([key, { start, end }]) => (
-            <ReferenceArea
-              key={key}
-              x1={start}
-              x2={end}
-              stroke="var(--color-yellow-700)"
-              strokeWidth={1}
-              strokeDasharray="5"
-              strokeOpacity={0.75}
-              fill="var(--color-yellow-800)"
-              fillOpacity={0.1}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">  
+      <Container className="col-span-2">
+        <h3 className="text-lg font-semibold text-gray-300 mb-2">Failing Checks Over Time</h3>
+        <IntervalButtons currentInterval={currentInterval} setIntervalParam={setIntervalParam} />
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={chartData} margin={{ right: 25 }}>
+            <XAxis
+              className="text-sm font-mono fill-gray-300"
+              stroke="var(--color-gray-300)"
+              dataKey="timestamp"
+              tickCount={10}
+              tickFormatter={formatHour}
+              scale="time"
+              minTickGap={50}
             />
-          ))}
-          
-          {groupNames.map((group, idx) => (
-            <Line
-              key={group}
-              type="linear"
-              dataKey={group}
-              stroke={palette[idx % palette.length]}
-              strokeWidth={2}
-              dot={false}
-              isAnimationActive={false}
+            <YAxis
+              className="text-sm font-mono fill-gray-300"
+              width={45}
+              stroke="var(--color-gray-300)"
+              allowDecimals={false}
             />
-          ))}
-        </LineChart>
-      </ResponsiveContainer>
-    </Container>
+            <CartesianGrid
+              stroke="var(--color-gray-700)"
+              strokeDasharray="4"
+            />
+            <Tooltip
+              wrapperClassName="rounded font-mono text-sm"
+              labelClassName="font-bold pb-2"
+              contentStyle={{ backgroundColor: "var(--color-gray-950)", color: "var(--color-white)", border: undefined }}
+              labelFormatter={(ts) => formatDateTime(ts) }
+              formatter={(value: number, name: string) => [value, name]}
+            />
+            <Legend
+              iconType="line"
+              formatter={(value, entry, idx) => (
+                <span className="text-sm font-mono" style={{ color: palette[idx % palette.length] }}>{value}</span>
+              )}
+            />
+            {Object.entries(uniqueMarkers).map(([key, { start, end }]) => (
+              <ReferenceArea
+                key={key}
+                x1={start}
+                x2={end}
+                stroke="var(--color-yellow-700)"
+                strokeWidth={1}
+                strokeDasharray="5"
+                strokeOpacity={0.75}
+                fill="var(--color-yellow-800)"
+                fillOpacity={0.1}
+                ifOverflow="hidden"
+              />
+            ))}
+            
+            {groupNames.map((group, idx) => (
+              <Line
+                key={group}
+                type="linear"
+                dataKey={group}
+                stroke={palette[idx % palette.length]}
+                strokeWidth={2}
+                dot={false}
+                isAnimationActive={false}
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </Container>
+      <Container className="col-span-1 overflow-y-auto w-full">
+        <h3 className="text-lg font-semibold text-gray-300 mb-2">Markers</h3>
+        {markers.length > 0 ? (
+          <ul>
+            {markers.map((marker) => (
+              <li key={`${marker.start}-${marker.end}-${marker.name}`} className="text-sm font-mono">
+                {formatHour(marker.start)}-{formatHour(marker.end)}: {marker.name}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No markers found</p>
+        )}
+      </Container>
+    </div>
   );
 }
