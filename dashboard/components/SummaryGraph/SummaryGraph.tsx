@@ -108,17 +108,11 @@ export default function SummaryGraph() {
     return entry;
   });
 
-  // Deduplicate markers
-  const deduplicatedMarkers: { [key: string]: string[] } = {};
-
+  // Create a list of unique markers by start and end date
+  const uniqueMarkers: { [key: string]: { start: number; end: number } } = {};
   markers.forEach((marker) => {
     const key = `${marker.start}-${marker.end}`;
-
-    if (!deduplicatedMarkers[key]) {
-      deduplicatedMarkers[key] = [marker.name];
-    } else {
-      deduplicatedMarkers[key].push(marker.name);
-    }
+    uniqueMarkers[key] = { start: marker.start, end: marker.end };
   });
 
   const palette = [
@@ -171,11 +165,11 @@ export default function SummaryGraph() {
               <span className="text-sm font-mono" style={{ color: palette[idx % palette.length] }}>{value}</span>
             )}
           />
-          {Object.entries(deduplicatedMarkers).map(([key, names]) => (
+          {Object.entries(uniqueMarkers).map(([key, { start, end }]) => (
             <ReferenceArea
               key={key}
-              x1={Number(key.split('-')[0])}
-              x2={Number(key.split('-')[1])}
+              x1={start}
+              x2={end}
               stroke="var(--color-yellow-700)"
               strokeWidth={1}
               strokeDasharray="5"
