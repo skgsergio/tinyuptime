@@ -1,5 +1,5 @@
 DESCRIPTION >
-    Retrieves the summary timeseries
+    Retrieves the markers timeseries
 
 TOKEN "public_dashboard" READ
 
@@ -27,11 +27,14 @@ SQL >
         {% end %}
     {% end %}
     SELECT
-        toUnixTimestamp(s.timestamp) AS timestamp,
-        * EXCEPT timestamp
-    FROM summaries s
+        toUnixTimestamp(m.start) AS start,
+        toUnixTimestamp(m.end) AS end,
+        * EXCEPT (start, end)
+    FROM markers m
     WHERE
-        s.timestamp BETWEEN now() - INTERVAL {{ _hours }} HOUR AND now()
-    ORDER BY timestamp ASC
+        m.start BETWEEN now() - INTERVAL {{ _hours }} HOUR AND now()
+        OR
+        m.end BETWEEN now() - INTERVAL {{ _hours }} HOUR AND now()
+    ORDER BY start ASC, end ASC
 
 TYPE ENDPOINT

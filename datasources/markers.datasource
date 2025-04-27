@@ -1,0 +1,11 @@
+DESCRIPTION >
+    Graph markers.
+
+SCHEMA >
+    `start` DateTime `json:$.start`,
+    `end` DateTime DEFAULT '1970-01-01 00:00:00' `json:$.end`,
+    `name` String `json:$.name`,
+    `class` String `json:$.class`
+
+ENGINE MergeTree
+ENGINE_SORTING_KEY start, end
