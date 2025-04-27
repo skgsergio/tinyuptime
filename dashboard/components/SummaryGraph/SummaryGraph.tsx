@@ -10,7 +10,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer, 
-  CartesianGrid
+  CartesianGrid,
+  ReferenceArea
 } from "recharts";
 
 import { formatDateTime, formatHour } from "@/lib/dateUtils";
@@ -27,11 +28,19 @@ export interface SummaryTimeseriesPointData {
   total_checks: number;
 }
 
+export interface MarkerTimeseriesPointData {
+  start: number;
+  end: number;
+  name: string;
+  class: string;
+}
+
 export default function SummaryGraph() {
-  const [data, setData] = useState<SummaryTimeseriesPointData[] | undefined>(undefined);
+  const [data, setData] = useState<SummaryTimeseriesPointData[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [firstLoad, setFirstLoad] = useState(true);
   const [currentInterval, setIntervalParam] = useState('1d');
+  const [markers, setMarkers] = useState<MarkerTimeseriesPointData[]>([]);
   const { reloadDate } = useTimer();
 
   useEffect(() => {
@@ -58,6 +67,28 @@ export default function SummaryGraph() {
     fetchData();
   }, [currentInterval, reloadDate]);
 
+  useEffect(() => {
+    const fetchMarkers = () => {
+      fetch(
+        `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/markers_timeseries.json?interval=${currentInterval}&token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch markers timeseries data');
+          }
+          return response.json();
+        })
+        .then((json) => {
+          setMarkers(json.data);
+        })
+        .catch((err) => {
+          setError(err.message);
+        });
+    };
+
+    fetchMarkers();
+  }, [currentInterval, reloadDate]);
+
   if (firstLoad) return <Container className="animate-pulse"></Container>;
   if (error) return <Container className="text-red-400">{error}</Container>;
   if (!data || data.length === 0) return <Container>No data available</Container>;
@@ -75,6 +106,19 @@ export default function SummaryGraph() {
       entry[group] = found ? found.failing_checks : 0;
     });
     return entry;
+  });
+
+  // Deduplicate markers
+  const deduplicatedMarkers: { [key: string]: string[] } = {};
+
+  markers.forEach((marker) => {
+    const key = `${marker.start}-${marker.end}`;
+
+    if (!deduplicatedMarkers[key]) {
+      deduplicatedMarkers[key] = [marker.name];
+    } else {
+      deduplicatedMarkers[key].push(marker.name);
+    }
   });
 
   const palette = [
@@ -127,6 +171,20 @@ export default function SummaryGraph() {
               <span className="text-sm font-mono" style={{ color: palette[idx % palette.length] }}>{value}</span>
             )}
           />
+          {Object.entries(deduplicatedMarkers).map(([key, names]) => (
+            <ReferenceArea
+              key={key}
+              x1={Number(key.split('-')[0])}
+              x2={Number(key.split('-')[1])}
+              stroke="var(--color-yellow-700)"
+              strokeWidth={1}
+              strokeDasharray="5"
+              strokeOpacity={0.75}
+              fill="var(--color-yellow-800)"
+              fillOpacity={0.1}
+            />
+          ))}
+          
           {groupNames.map((group, idx) => (
             <Line
               key={group}
@@ -143,4 +201,3 @@ export default function SummaryGraph() {
     </Container>
   );
 }
-
