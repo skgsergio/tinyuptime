@@ -1,9 +1,0 @@
-'use client';
-
-export default function Container({ children, className }: { children?: React.ReactNode, className?: string }) {
-  return (
-    <div className={`rounded-lg shadow-lg bg-gray-800 mb-6 p-6 h-110 ${className || ''}`}>
-      {children}
-    </div>
-  )
-}

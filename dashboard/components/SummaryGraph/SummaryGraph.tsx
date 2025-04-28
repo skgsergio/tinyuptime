@@ -18,7 +18,7 @@ import { formatDateTime, formatHour } from "@/lib/dateUtils";
 import { useTimer } from '@/contexts/TimerContext';
 
 import IntervalButtons from "./IntervalButtons";
-import Container from './Container';
+import Widget from './Widget';
 
 export interface SummaryTimeseriesPointData {
   timestamp: number;
@@ -34,6 +34,18 @@ export interface MarkerTimeseriesPointData {
   name: string;
   class: string;
 }
+
+const GRAPH_COLORS = [
+  "var(--color-red-400)",
+  "var(--color-blue-400)",
+  "var(--color-yellow-400)",
+  "var(--color-green-400)",
+  "var(--color-purple-400)",
+  "var(--color-pink-400)",
+  "var(--color-sky-400)",
+  "var(--color-rose-400)",
+  "var(--color-amber-400)",
+];
 
 export default function SummaryGraph() {
   const [data, setData] = useState<SummaryTimeseriesPointData[]>([]);
@@ -94,9 +106,9 @@ export default function SummaryGraph() {
     fetchMarkers();
   }, [currentInterval, reloadDate]);
 
-  if (firstLoad) return <Container className="animate-pulse"></Container>;
-  if (error) return <Container className="text-red-400">{error}</Container>;
-  if (!data || data.length === 0) return <Container>No data available</Container>;
+  if (firstLoad) return <Widget className="animate-pulse"></Widget>;
+  if (error) return <Widget className="text-red-400">{error}</Widget>;
+  if (!data || data.length === 0) return <Widget>No data available</Widget>;
 
   // Group data by timestamp
   const timestamps = Array.from(new Set(data.map((d) => d.timestamp))).sort();
@@ -114,27 +126,15 @@ export default function SummaryGraph() {
   });
 
   // Create a list of unique markers by start and end date
-  const uniqueMarkers: { [key: string]: { start: number; end: number } } = {};
+  const uniqueMarkers: { [key: string]: { start: number; end: number} } = {};
   markers.forEach((marker) => {
     const key = `${marker.start}-${marker.end}`;
     uniqueMarkers[key] = { start: marker.start, end: marker.end };
   });
 
-  const palette = [
-    "var(--color-red-400)",
-    "var(--color-blue-400)",
-    "var(--color-yellow-400)",
-    "var(--color-green-400)",
-    "var(--color-purple-400)",
-    "var(--color-pink-400)",
-    "var(--color-sky-400)",
-    "var(--color-rose-400)",
-    "var(--color-amber-400)",
-  ];
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">  
-      <Container className="col-span-2">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">  
+      <Widget className="md:col-span-2">
         <h3 className="text-lg font-semibold text-gray-300 mb-2">Failing Checks Over Time</h3>
         <IntervalButtons currentInterval={currentInterval} setIntervalParam={setIntervalParam} />
         <ResponsiveContainer width="100%" height={300}>
@@ -168,7 +168,7 @@ export default function SummaryGraph() {
             <Legend
               iconType="line"
               formatter={(value, entry, idx) => (
-                <span className="text-sm font-mono" style={{ color: palette[idx % palette.length] }}>{value}</span>
+                <span className="text-sm font-mono" style={{ color: GRAPH_COLORS[idx % GRAPH_COLORS.length] }}>{value}</span>
               )}
             />
             {Object.entries(uniqueMarkers).map(([key, { start, end }]) => (
@@ -191,7 +191,7 @@ export default function SummaryGraph() {
                 key={group}
                 type="linear"
                 dataKey={group}
-                stroke={palette[idx % palette.length]}
+                stroke={GRAPH_COLORS[idx % GRAPH_COLORS.length]}
                 strokeWidth={2}
                 dot={false}
                 isAnimationActive={false}
@@ -199,8 +199,8 @@ export default function SummaryGraph() {
             ))}
           </LineChart>
         </ResponsiveContainer>
-      </Container>
-      <Container className="col-span-1 overflow-y-auto w-full">
+      </Widget>
+      <Widget className="overflow-y-auto">
         <h3 className="text-lg font-semibold text-gray-300 mb-2">Markers</h3>
         {markers.length > 0 ? (
           <ul>
@@ -213,7 +213,7 @@ export default function SummaryGraph() {
         ) : (
           <p>No markers found</p>
         )}
-      </Container>
+      </Widget>
     </div>
   );
 }

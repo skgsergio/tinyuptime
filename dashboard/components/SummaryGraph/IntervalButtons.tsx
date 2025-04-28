@@ -1,8 +1,22 @@
 "use client";
 
-const intervals = ["6h", "12h", "1d", "7d", "14d"];
+import { useState } from 'react';
+
+import { useCheats } from '@/lib/cheats';
+
+const INTERVALS = ["6h", "12h", "1d", "7d"];
+
 
 export default function IntervalButtons({ currentInterval, setIntervalParam }: { currentInterval: string, setIntervalParam: (interval: string) => void }) {
+  const [cheatsEnabled, setCheatsEnabled] = useState(false);
+
+  useCheats(() => {
+    setCheatsEnabled(!cheatsEnabled);
+  })
+
+  const intervals = INTERVALS.slice();
+  if (cheatsEnabled) intervals.push("14d");
+
   return (
     <div className="row flex mb-4 justify-end">
       {intervals.map((interval, idx) => {
