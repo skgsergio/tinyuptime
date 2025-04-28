@@ -1,6 +1,6 @@
-import { MainContainer } from '@/components/MainContainer';
+import { MainContainer } from "@/components/MainContainer";
 
-import CheckStatusWidgets from '@/components/CheckStatusWidgets';
+import CheckStatusWidgets from "@/components/CheckStatusWidgets";
 
 export default function StatusPage() {
   return (

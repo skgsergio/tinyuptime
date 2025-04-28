@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 import {
   LineChart,
@@ -9,16 +9,16 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  ResponsiveContainer, 
+  ResponsiveContainer,
   CartesianGrid,
-  ReferenceArea
+  ReferenceArea,
 } from "recharts";
 
 import { formatDateTime, formatHour } from "@/lib/dateUtils";
-import { useTimer } from '@/contexts/TimerContext';
+import { useTimer } from "@/contexts/TimerContext";
 
 import IntervalButtons from "./IntervalButtons";
-import Widget from './Widget';
+import Widget from "./Widget";
 
 export interface SummaryTimeseriesPointData {
   timestamp: number;
@@ -51,18 +51,18 @@ export default function SummaryGraph() {
   const [data, setData] = useState<SummaryTimeseriesPointData[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [firstLoad, setFirstLoad] = useState(true);
-  const [currentInterval, setIntervalParam] = useState('1d');
+  const [currentInterval, setIntervalParam] = useState("1d");
   const [markers, setMarkers] = useState<MarkerTimeseriesPointData[]>([]);
   const { reloadDate } = useTimer();
 
   useEffect(() => {
     const fetchData = () => {
       fetch(
-        `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/summaries_timeseries.json?interval=${currentInterval}&token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`
+        `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/summaries_timeseries.json?interval=${currentInterval}&token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`,
       )
         .then((response) => {
           if (!response.ok) {
-            throw new Error('Failed to fetch summary timeseries data');
+            throw new Error("Failed to fetch summary timeseries data");
           }
           return response.json();
         })
@@ -82,19 +82,28 @@ export default function SummaryGraph() {
   useEffect(() => {
     const fetchMarkers = () => {
       fetch(
-        `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/markers_timeseries.json?interval=${currentInterval}&token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`
+        `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/markers_timeseries.json?interval=${currentInterval}&token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`,
       )
         .then((response) => {
           if (!response.ok) {
-            throw new Error('Failed to fetch markers timeseries data');
+            throw new Error("Failed to fetch markers timeseries data");
           }
           return response.json();
         })
         .then((json) => {
           //remove duplicated json.data entries
-          const uniqueMarkers = json.data.filter((marker: MarkerTimeseriesPointData, index: number) => {
-            return json.data.findIndex((m: MarkerTimeseriesPointData) => m.start === marker.start && m.end === marker.end && m.name === marker.name) === index;
-          });
+          const uniqueMarkers = json.data.filter(
+            (marker: MarkerTimeseriesPointData, index: number) => {
+              return (
+                json.data.findIndex(
+                  (m: MarkerTimeseriesPointData) =>
+                    m.start === marker.start &&
+                    m.end === marker.end &&
+                    m.name === marker.name,
+                ) === index
+              );
+            },
+          );
 
           setMarkers(uniqueMarkers);
         })
@@ -116,27 +125,36 @@ export default function SummaryGraph() {
 
   // Create chart data: one object per timestamp, each with group_name: failing_checks
   const chartData = timestamps.map((ts) => {
-    const entry: { timestamp: number; [key: string]: number } = { timestamp: ts };
-    
+    const entry: { timestamp: number; [key: string]: number } = {
+      timestamp: ts,
+    };
+
     groupNames.forEach((group) => {
-      const found = data.find((d) => d.timestamp === ts && d.group_name === group);
+      const found = data.find(
+        (d) => d.timestamp === ts && d.group_name === group,
+      );
       entry[group] = found ? found.failing_checks : 0;
     });
     return entry;
   });
 
   // Create a list of unique markers by start and end date
-  const uniqueMarkers: { [key: string]: { start: number; end: number} } = {};
+  const uniqueMarkers: { [key: string]: { start: number; end: number } } = {};
   markers.forEach((marker) => {
     const key = `${marker.start}-${marker.end}`;
     uniqueMarkers[key] = { start: marker.start, end: marker.end };
   });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">  
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <Widget className="md:col-span-2">
-        <h3 className="text-lg font-semibold text-gray-300 mb-2">Failing Checks Over Time</h3>
-        <IntervalButtons currentInterval={currentInterval} setIntervalParam={setIntervalParam} />
+        <h3 className="text-lg font-semibold text-gray-300 mb-2">
+          Failing Checks Over Time
+        </h3>
+        <IntervalButtons
+          currentInterval={currentInterval}
+          setIntervalParam={setIntervalParam}
+        />
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={chartData} margin={{ right: 25 }}>
             <XAxis
@@ -154,21 +172,27 @@ export default function SummaryGraph() {
               stroke="var(--color-gray-300)"
               allowDecimals={false}
             />
-            <CartesianGrid
-              stroke="var(--color-gray-700)"
-              strokeDasharray="4"
-            />
+            <CartesianGrid stroke="var(--color-gray-700)" strokeDasharray="4" />
             <Tooltip
               wrapperClassName="rounded font-mono text-sm"
               labelClassName="font-bold pb-2"
-              contentStyle={{ backgroundColor: "var(--color-gray-950)", color: "var(--color-white)", border: undefined }}
-              labelFormatter={(ts) => formatDateTime(ts) }
+              contentStyle={{
+                backgroundColor: "var(--color-gray-950)",
+                color: "var(--color-white)",
+                border: undefined,
+              }}
+              labelFormatter={(ts) => formatDateTime(ts)}
               formatter={(value: number, name: string) => [value, name]}
             />
             <Legend
               iconType="line"
               formatter={(value, entry, idx) => (
-                <span className="text-sm font-mono" style={{ color: GRAPH_COLORS[idx % GRAPH_COLORS.length] }}>{value}</span>
+                <span
+                  className="text-sm font-mono"
+                  style={{ color: GRAPH_COLORS[idx % GRAPH_COLORS.length] }}
+                >
+                  {value}
+                </span>
               )}
             />
             {Object.entries(uniqueMarkers).map(([key, { start, end }]) => (
@@ -185,7 +209,7 @@ export default function SummaryGraph() {
                 ifOverflow="hidden"
               />
             ))}
-            
+
             {groupNames.map((group, idx) => (
               <Line
                 key={group}
@@ -205,8 +229,12 @@ export default function SummaryGraph() {
         {markers.length > 0 ? (
           <ul>
             {markers.map((marker) => (
-              <li key={`${marker.start}-${marker.end}-${marker.name}`} className="text-sm font-mono">
-                {formatHour(marker.start)}-{formatHour(marker.end)}: {marker.name}
+              <li
+                key={`${marker.start}-${marker.end}-${marker.name}`}
+                className="text-sm font-mono"
+              >
+                {formatHour(marker.start)}-{formatHour(marker.end)}:{" "}
+                {marker.name}
               </li>
             ))}
           </ul>

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 export function ErrorMessage({ error }: { error: string }) {
   return <div className="text-center p-4 text-red-500">Error: {error}</div>;

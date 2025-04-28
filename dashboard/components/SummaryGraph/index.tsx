@@ -1,3 +1,3 @@
-import SummaryGraph from './SummaryGraph';
+import SummaryGraph from "./SummaryGraph";
 
 export default SummaryGraph;

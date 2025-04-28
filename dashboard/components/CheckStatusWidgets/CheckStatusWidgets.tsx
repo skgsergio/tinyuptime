@@ -1,11 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-import { FirstIcon, PreviousIcon, NextIcon, LastIcon } from '@/components/Icons/Pagination';
-import { ErrorMessage, NoDataMessage } from './Messages';
+import {
+  FirstIcon,
+  PreviousIcon,
+  NextIcon,
+  LastIcon,
+} from "@/components/Icons/Pagination";
+import { ErrorMessage, NoDataMessage } from "./Messages";
 
-import StatusBarGraph from './StatusBarGraph';
+import StatusBarGraph from "./StatusBarGraph";
 
 export interface LastHourData {
   check_name: string;
@@ -21,18 +26,18 @@ export default function CheckStatusWidgets() {
   const [loading, setLoading] = useState(true);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 18;
 
   useEffect(() => {
     const fetchData = (showLoading: boolean) => {
-      if (showLoading) setLoading(true);  
+      if (showLoading) setLoading(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/last_hour.json?token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`
+        `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/last_hour.json?token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`,
       )
         .then((response) => {
           if (!response.ok) {
-            throw new Error('Failed to fetch last hour data');
+            throw new Error("Failed to fetch last hour data");
           }
           return response.json();
         })
@@ -46,20 +51,20 @@ export default function CheckStatusWidgets() {
         });
     };
 
-    
     fetchData(true);
     const refreshInterval = setInterval(() => fetchData(false), 300000);
     return () => clearInterval(refreshInterval);
   }, []);
 
-  if (loading) return (
-    <div className="rounded-lg shadow-lg bg-gray-800 h-200 animate-pulse"></div>
-  );
+  if (loading)
+    return (
+      <div className="rounded-lg shadow-lg bg-gray-800 h-200 animate-pulse"></div>
+    );
   if (error) return <ErrorMessage error={error} />;
   if (!data || data.length === 0) return <NoDataMessage />;
-  
-  const filteredChecks = data.filter(check =>
-    check.check_name.toLowerCase().includes(searchQuery.toLowerCase())
+
+  const filteredChecks = data.filter((check) =>
+    check.check_name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const totalPages = Math.ceil(filteredChecks.length / itemsPerPage);
@@ -95,7 +100,7 @@ export default function CheckStatusWidgets() {
                 <div
                   key={check.check_name}
                   className={`p-4 rounded-lg ${
-                    lastStatus ? 'bg-green-900' : 'bg-red-900'
+                    lastStatus ? "bg-green-900" : "bg-red-900"
                   }`}
                 >
                   <h3 className="text-xl font-semibold text-white mb-2">
@@ -120,7 +125,7 @@ export default function CheckStatusWidgets() {
                 <FirstIcon />
               </button>
               <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
                 className="p-2 rounded bg-gray-700 text-white hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Previous page"
@@ -128,10 +133,13 @@ export default function CheckStatusWidgets() {
                 <PreviousIcon />
               </button>
               <span className="text-white">
-                Page <span className="font-mono">{currentPage}</span> of <span className="font-mono">{totalPages}</span>
+                Page <span className="font-mono">{currentPage}</span> of{" "}
+                <span className="font-mono">{totalPages}</span>
               </span>
               <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
                 className="p-2 rounded bg-gray-700 text-white hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Next page"

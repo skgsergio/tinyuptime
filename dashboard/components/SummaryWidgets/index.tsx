@@ -1,3 +1,3 @@
-import SummaryWidgets from './SummaryWidgets';
+import SummaryWidgets from "./SummaryWidgets";
 
 export default SummaryWidgets;

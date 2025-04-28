@@ -1,3 +1,3 @@
-import CheckStatusWidgets from './CheckStatusWidgets';
+import CheckStatusWidgets from "./CheckStatusWidgets";
 
 export default CheckStatusWidgets;

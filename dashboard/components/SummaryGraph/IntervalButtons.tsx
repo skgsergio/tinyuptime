@@ -1,18 +1,23 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
-import { useCheats } from '@/lib/cheats';
+import { useCheats } from "@/lib/cheats";
 
 const INTERVALS = ["6h", "12h", "1d", "7d"];
 
-
-export default function IntervalButtons({ currentInterval, setIntervalParam }: { currentInterval: string, setIntervalParam: (interval: string) => void }) {
+export default function IntervalButtons({
+  currentInterval,
+  setIntervalParam,
+}: {
+  currentInterval: string;
+  setIntervalParam: (interval: string) => void;
+}) {
   const [cheatsEnabled, setCheatsEnabled] = useState(false);
 
   useCheats(() => {
     setCheatsEnabled(!cheatsEnabled);
-  })
+  });
 
   const intervals = INTERVALS.slice();
   if (cheatsEnabled) intervals.push("14d");
@@ -22,7 +27,8 @@ export default function IntervalButtons({ currentInterval, setIntervalParam }: {
       {intervals.map((interval, idx) => {
         let classes = "rounded-none border-r-0";
         if (idx === 0) classes = "rounded-md rounded-r-none border-r-0";
-        else if (idx === intervals.length - 1) classes = "rounded-md rounded-l-none";
+        else if (idx === intervals.length - 1)
+          classes = "rounded-md rounded-l-none";
         return (
           <button
             key={interval}
