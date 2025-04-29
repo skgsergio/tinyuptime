@@ -14,7 +14,11 @@ import {
   ReferenceArea,
 } from "recharts";
 
-import { formatDateTime, formatHour, formatDateTimeRange } from "@/lib/dateUtils";
+import {
+  formatDateTime,
+  formatHour,
+  formatDateTimeRange,
+} from "@/lib/dateUtils";
 import { useTimer } from "@/contexts/TimerContext";
 
 import IntervalButtons from "./IntervalButtons";
@@ -32,11 +36,29 @@ const GRAPH_COLORS = [
   "var(--color-amber-400)",
 ];
 
-const CLASS_COLORS: { [key: string]: { stroke: string; fill: string; textClass: string } } = {
-  info: { stroke: "var(--color-blue-700)", fill: "var(--color-blue-800)", textClass: "text-blue-400" },
-  success: { stroke: "var(--color-green-700)", fill: "var(--color-green-800)", textClass: "text-green-400" },
-  warning: { stroke: "var(--color-yellow-700)", fill: "var(--color-yellow-800)", textClass: "text-yellow-400" },
-  error: { stroke: "var(--color-red-700)", fill: "var(--color-red-800)", textClass: "text-red-400" },
+const CLASS_COLORS: {
+  [key: string]: { stroke: string; fill: string; textClass: string };
+} = {
+  info: {
+    stroke: "var(--color-blue-700)",
+    fill: "var(--color-blue-800)",
+    textClass: "text-blue-400",
+  },
+  success: {
+    stroke: "var(--color-green-700)",
+    fill: "var(--color-green-800)",
+    textClass: "text-green-400",
+  },
+  warning: {
+    stroke: "var(--color-yellow-700)",
+    fill: "var(--color-yellow-800)",
+    textClass: "text-yellow-400",
+  },
+  error: {
+    stroke: "var(--color-red-700)",
+    fill: "var(--color-red-800)",
+    textClass: "text-red-400",
+  },
 };
 
 export interface SummaryTimeseriesPointData {
@@ -143,7 +165,9 @@ export default function SummaryGraph() {
 
   // Process data for recharts
   const chartSeries = new Set<string>();
-  const chartData: { [key: number]: { timestamp: number; [key: string]: number } } = {};
+  const chartData: {
+    [key: number]: { timestamp: number; [key: string]: number };
+  } = {};
 
   data.forEach((point: SummaryTimeseriesPointData) => {
     if (!chartData[point.timestamp]) {
@@ -156,14 +180,26 @@ export default function SummaryGraph() {
   });
 
   // Create a list of unique markers by start and end date
-  const uniqueMarkers: { [key: string]: { start: number; end: number; class: string; name: string[] } } = {};
+  const uniqueMarkers: {
+    [key: string]: {
+      start: number;
+      end: number;
+      class: string;
+      name: string[];
+    };
+  } = {};
   markers.forEach((marker) => {
     const key = uniqueIdMarkerTimeseriesPoint(marker);
 
     if (uniqueMarkers[key]) {
       uniqueMarkers[key].name.push(marker.name);
     } else {
-      uniqueMarkers[key] = { start: marker.start, end: marker.end, class: marker.class, name: [marker.name] };
+      uniqueMarkers[key] = {
+        start: marker.start,
+        end: marker.end,
+        class: marker.class,
+        name: [marker.name],
+      };
     }
   });
 
@@ -217,20 +253,26 @@ export default function SummaryGraph() {
                 </span>
               )}
             />
-            {Object.entries(uniqueMarkers).map(([key, { start, end, class: markerClass }]) => (
-              <ReferenceArea
-                key={key}
-                x1={start}
-                x2={end}
-                stroke={CLASS_COLORS[markerClass].stroke || "var(--color-slate-700)"}
-                strokeWidth={1}
-                strokeDasharray="5"
-                strokeOpacity={0.75}
-                fill={CLASS_COLORS[markerClass].fill || "var(--color-slate-800)"}
-                fillOpacity={0.1}
-                ifOverflow="hidden"
-              />
-            ))}
+            {Object.entries(uniqueMarkers).map(
+              ([key, { start, end, class: markerClass }]) => (
+                <ReferenceArea
+                  key={key}
+                  x1={start}
+                  x2={end}
+                  stroke={
+                    CLASS_COLORS[markerClass].stroke || "var(--color-slate-700)"
+                  }
+                  strokeWidth={1}
+                  strokeDasharray="5"
+                  strokeOpacity={0.75}
+                  fill={
+                    CLASS_COLORS[markerClass].fill || "var(--color-slate-800)"
+                  }
+                  fillOpacity={0.1}
+                  ifOverflow="hidden"
+                />
+              ),
+            )}
 
             {Array.from(chartSeries).map((group, idx) => (
               <Line
@@ -249,16 +291,22 @@ export default function SummaryGraph() {
       <Widget className="overflow-y-auto">
         <h3 className="text-lg font-semibold text-gray-300 mb-2">Markers</h3>
         {Object.entries(uniqueMarkers).length > 0 ? (
-          Object.entries(uniqueMarkers).map(([key, { start, end, class: markerClass }]) => (
-            <div key={key} className="text-sm font-mono mb-6">
-              <span className={`font-semibold ${CLASS_COLORS[markerClass].textClass}`}>{formatDateTimeRange(start, end)}</span>
-              <ul className="pl-4 pt-1">
-                {uniqueMarkers[key].name.map((name, idx) => (
-                  <li key={idx}>{name}</li>
-                ))}
-              </ul>
-            </div>
-          ))
+          Object.entries(uniqueMarkers).map(
+            ([key, { start, end, class: markerClass }]) => (
+              <div key={key} className="text-sm font-mono mb-6">
+                <span
+                  className={`font-semibold ${CLASS_COLORS[markerClass].textClass}`}
+                >
+                  {formatDateTimeRange(start, end)}
+                </span>
+                <ul className="pl-4 pt-1">
+                  {uniqueMarkers[key].name.map((name, idx) => (
+                    <li key={idx}>{name}</li>
+                  ))}
+                </ul>
+              </div>
+            ),
+          )
         ) : (
           <p>No markers found</p>
         )}
