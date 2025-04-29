@@ -253,26 +253,32 @@ export default function SummaryGraph() {
                 </span>
               )}
             />
-            {Object.entries(uniqueMarkers).map(
-              ([key, { start, end, class: markerClass }]) => (
-                <ReferenceArea
-                  key={key}
-                  x1={start}
-                  x2={end}
-                  stroke={
-                    CLASS_COLORS[markerClass].stroke || "var(--color-slate-700)"
-                  }
-                  strokeWidth={1}
-                  strokeDasharray="5"
-                  strokeOpacity={0.75}
-                  fill={
-                    CLASS_COLORS[markerClass].fill || "var(--color-slate-800)"
-                  }
-                  fillOpacity={0.1}
-                  ifOverflow="hidden"
-                />
-              ),
-            )}
+            {Object.keys(uniqueMarkers).map((key, idx) => (
+              <ReferenceArea
+                key={key}
+                x1={uniqueMarkers[key].start}
+                x2={uniqueMarkers[key].end}
+                stroke={
+                  CLASS_COLORS[uniqueMarkers[key].class].stroke ||
+                  "var(--color-slate-700)"
+                }
+                strokeWidth={1}
+                strokeDasharray="5"
+                strokeOpacity={0.75}
+                fill={
+                  CLASS_COLORS[uniqueMarkers[key].class].fill ||
+                  "var(--color-slate-800)"
+                }
+                fillOpacity={0.1}
+                ifOverflow="hidden"
+                label={{
+                  value: idx,
+                  position: "insideTop",
+                  className: `text-xs font-mono`,
+                  fill: CLASS_COLORS[uniqueMarkers[key].class].stroke,
+                }}
+              />
+            ))}
 
             {Array.from(chartSeries).map((group, idx) => (
               <Line
@@ -291,22 +297,22 @@ export default function SummaryGraph() {
       <Widget className="overflow-y-auto">
         <h3 className="text-lg font-semibold text-gray-300 mb-2">Markers</h3>
         {Object.entries(uniqueMarkers).length > 0 ? (
-          Object.entries(uniqueMarkers).map(
-            ([key, { start, end, class: markerClass }]) => (
-              <div key={key} className="text-sm font-mono mb-6">
-                <span
-                  className={`font-semibold ${CLASS_COLORS[markerClass].textClass}`}
-                >
-                  {formatDateTimeRange(start, end)}
-                </span>
-                <ul className="pl-4 pt-1">
-                  {uniqueMarkers[key].name.map((name, idx) => (
-                    <li key={idx}>{name}</li>
-                  ))}
-                </ul>
+          Object.keys(uniqueMarkers).map((key, idx) => (
+            <div key={key} className="text-sm font-mono mb-6">
+              <div className={CLASS_COLORS[uniqueMarkers[key].class].textClass}>
+                <span className="font-semibold">[#{idx}]</span>{" "}
+                {formatDateTimeRange(
+                  uniqueMarkers[key].start,
+                  uniqueMarkers[key].end,
+                )}
               </div>
-            ),
-          )
+              <ul className="pl-8 pt-1 list-disc">
+                {uniqueMarkers[key].name.map((name, nameIdx) => (
+                  <li key={nameIdx}>{name}</li>
+                ))}
+              </ul>
+            </div>
+          ))
         ) : (
           <p>No markers found</p>
         )}
