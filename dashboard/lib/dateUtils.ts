@@ -17,3 +17,7 @@ export const formatHour = (timestamp: number) => {
     hour12: false,
   });
 };
+
+export const formatDateTimeRange = (start: number, end: number) => {
+  return `${formatDateTime(start)} - ${formatDateTime(end)}`;
+};

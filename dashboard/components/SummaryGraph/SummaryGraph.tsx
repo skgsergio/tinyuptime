@@ -14,11 +14,30 @@ import {
   ReferenceArea,
 } from "recharts";
 
-import { formatDateTime, formatHour } from "@/lib/dateUtils";
+import { formatDateTime, formatHour, formatDateTimeRange } from "@/lib/dateUtils";
 import { useTimer } from "@/contexts/TimerContext";
 
 import IntervalButtons from "./IntervalButtons";
 import Widget from "./Widget";
+
+const GRAPH_COLORS = [
+  "var(--color-red-400)",
+  "var(--color-blue-400)",
+  "var(--color-yellow-400)",
+  "var(--color-green-400)",
+  "var(--color-purple-400)",
+  "var(--color-pink-400)",
+  "var(--color-sky-400)",
+  "var(--color-rose-400)",
+  "var(--color-amber-400)",
+];
+
+const CLASS_COLORS: { [key: string]: { stroke: string; fill: string; textClass: string } } = {
+  info: { stroke: "var(--color-blue-700)", fill: "var(--color-blue-800)", textClass: "text-blue-400" },
+  success: { stroke: "var(--color-green-700)", fill: "var(--color-green-800)", textClass: "text-green-400" },
+  warning: { stroke: "var(--color-yellow-700)", fill: "var(--color-yellow-800)", textClass: "text-yellow-400" },
+  error: { stroke: "var(--color-red-700)", fill: "var(--color-red-800)", textClass: "text-red-400" },
+};
 
 export interface SummaryTimeseriesPointData {
   timestamp: number;
@@ -35,17 +54,23 @@ export interface MarkerTimeseriesPointData {
   class: string;
 }
 
-const GRAPH_COLORS = [
-  "var(--color-red-400)",
-  "var(--color-blue-400)",
-  "var(--color-yellow-400)",
-  "var(--color-green-400)",
-  "var(--color-purple-400)",
-  "var(--color-pink-400)",
-  "var(--color-sky-400)",
-  "var(--color-rose-400)",
-  "var(--color-amber-400)",
-];
+export function areMarkerTimeseriesPointsEqual(
+  m1: MarkerTimeseriesPointData,
+  m2: MarkerTimeseriesPointData,
+): boolean {
+  return (
+    m1.start === m2.start &&
+    m1.end === m2.end &&
+    m1.name === m2.name &&
+    m1.class === m2.class
+  );
+}
+
+export function uniqueIdMarkerTimeseriesPoint(
+  m: MarkerTimeseriesPointData,
+): string {
+  return `${m.start}-${m.end}-${m.class}`;
+}
 
 export default function SummaryGraph() {
   const [data, setData] = useState<SummaryTimeseriesPointData[]>([]);
@@ -91,15 +116,12 @@ export default function SummaryGraph() {
           return response.json();
         })
         .then((json) => {
-          //remove duplicated json.data entries
+          // Ensure markers are unique
           const uniqueMarkers = json.data.filter(
             (marker: MarkerTimeseriesPointData, index: number) => {
               return (
-                json.data.findIndex(
-                  (m: MarkerTimeseriesPointData) =>
-                    m.start === marker.start &&
-                    m.end === marker.end &&
-                    m.name === marker.name,
+                json.data.findIndex((m: MarkerTimeseriesPointData) =>
+                  areMarkerTimeseriesPointsEqual(m, marker),
                 ) === index
               );
             },
@@ -119,30 +141,30 @@ export default function SummaryGraph() {
   if (error) return <Widget className="text-red-400">{error}</Widget>;
   if (!data || data.length === 0) return <Widget>No data available</Widget>;
 
-  // Group data by timestamp
-  const timestamps = Array.from(new Set(data.map((d) => d.timestamp))).sort();
-  const groupNames = Array.from(new Set(data.map((d) => d.group_name)));
+  // Process data for recharts
+  const chartSeries = new Set<string>();
+  const chartData: { [key: number]: { timestamp: number; [key: string]: number } } = {};
 
-  // Create chart data: one object per timestamp, each with group_name: failing_checks
-  const chartData = timestamps.map((ts) => {
-    const entry: { timestamp: number; [key: string]: number } = {
-      timestamp: ts,
-    };
+  data.forEach((point: SummaryTimeseriesPointData) => {
+    if (!chartData[point.timestamp]) {
+      chartData[point.timestamp] = { timestamp: point.timestamp };
+    }
 
-    groupNames.forEach((group) => {
-      const found = data.find(
-        (d) => d.timestamp === ts && d.group_name === group,
-      );
-      entry[group] = found ? found.failing_checks : 0;
-    });
-    return entry;
+    chartSeries.add(point.group_name);
+
+    chartData[point.timestamp][point.group_name] = point.failing_checks;
   });
 
   // Create a list of unique markers by start and end date
-  const uniqueMarkers: { [key: string]: { start: number; end: number } } = {};
+  const uniqueMarkers: { [key: string]: { start: number; end: number; class: string; name: string[] } } = {};
   markers.forEach((marker) => {
-    const key = `${marker.start}-${marker.end}`;
-    uniqueMarkers[key] = { start: marker.start, end: marker.end };
+    const key = uniqueIdMarkerTimeseriesPoint(marker);
+
+    if (uniqueMarkers[key]) {
+      uniqueMarkers[key].name.push(marker.name);
+    } else {
+      uniqueMarkers[key] = { start: marker.start, end: marker.end, class: marker.class, name: [marker.name] };
+    }
   });
 
   return (
@@ -156,7 +178,7 @@ export default function SummaryGraph() {
           setIntervalParam={setIntervalParam}
         />
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={chartData} margin={{ right: 25 }}>
+          <LineChart data={Object.values(chartData)} margin={{ right: 25 }}>
             <XAxis
               className="text-sm font-mono fill-gray-300"
               stroke="var(--color-gray-300)"
@@ -195,22 +217,22 @@ export default function SummaryGraph() {
                 </span>
               )}
             />
-            {Object.entries(uniqueMarkers).map(([key, { start, end }]) => (
+            {Object.entries(uniqueMarkers).map(([key, { start, end, class: markerClass }]) => (
               <ReferenceArea
                 key={key}
                 x1={start}
                 x2={end}
-                stroke="var(--color-yellow-700)"
+                stroke={CLASS_COLORS[markerClass].stroke || "var(--color-slate-700)"}
                 strokeWidth={1}
                 strokeDasharray="5"
                 strokeOpacity={0.75}
-                fill="var(--color-yellow-800)"
+                fill={CLASS_COLORS[markerClass].fill || "var(--color-slate-800)"}
                 fillOpacity={0.1}
                 ifOverflow="hidden"
               />
             ))}
 
-            {groupNames.map((group, idx) => (
+            {Array.from(chartSeries).map((group, idx) => (
               <Line
                 key={group}
                 type="linear"
@@ -226,18 +248,17 @@ export default function SummaryGraph() {
       </Widget>
       <Widget className="overflow-y-auto">
         <h3 className="text-lg font-semibold text-gray-300 mb-2">Markers</h3>
-        {markers.length > 0 ? (
-          <ul>
-            {markers.map((marker) => (
-              <li
-                key={`${marker.start}-${marker.end}-${marker.name}`}
-                className="text-sm font-mono"
-              >
-                {formatHour(marker.start)}-{formatHour(marker.end)}:{" "}
-                {marker.name}
-              </li>
-            ))}
-          </ul>
+        {Object.entries(uniqueMarkers).length > 0 ? (
+          Object.entries(uniqueMarkers).map(([key, { start, end, class: markerClass }]) => (
+            <div key={key} className="text-sm font-mono mb-6">
+              <span className={`font-semibold ${CLASS_COLORS[markerClass].textClass}`}>{formatDateTimeRange(start, end)}</span>
+              <ul className="pl-4 pt-1">
+                {uniqueMarkers[key].name.map((name, idx) => (
+                  <li key={idx}>{name}</li>
+                ))}
+              </ul>
+            </div>
+          ))
         ) : (
           <p>No markers found</p>
         )}
