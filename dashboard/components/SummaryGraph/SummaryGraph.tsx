@@ -272,7 +272,7 @@ export default function SummaryGraph() {
                 fillOpacity={0.1}
                 ifOverflow="hidden"
                 label={{
-                  value: idx,
+                  value: idx + 1,
                   position: "insideTop",
                   className: `text-xs font-mono`,
                   fill: CLASS_COLORS[uniqueMarkers[key].class].stroke,
@@ -300,7 +300,7 @@ export default function SummaryGraph() {
           Object.keys(uniqueMarkers).map((key, idx) => (
             <div key={key} className="text-sm font-mono mb-6">
               <div className={CLASS_COLORS[uniqueMarkers[key].class].textClass}>
-                <span className="font-semibold">[#{idx}]</span>{" "}
+                <span className="font-semibold">[#{idx + 1}]</span>{" "}
                 {formatDateTimeRange(
                   uniqueMarkers[key].start,
                   uniqueMarkers[key].end,
