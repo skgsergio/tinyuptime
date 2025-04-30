@@ -15,6 +15,44 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_PAGE_TITLE,
   description: process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
+  icons: {
+    icon: [
+      {
+        rel: "icon",
+        type: "image/ico",
+        url: "/favicon/favicon.ico",
+      },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "16x16",
+        url: "/favicon/favicon-16x16.png",
+      },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "32x32",
+        url: "/favicon/favicon-32x32.png",
+      },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "192x192",
+        url: "/favicon/android-chrome-192x192.png",
+      },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "512x512",
+        url: "/favicon/android-chrome-512x512.png",
+      },
+      {
+        rel: "apple-touch-icon",
+        sizes: "180x180",
+        url: "/favicon/apple-touch-icon.png",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
