@@ -291,25 +291,27 @@ export default function SummaryGraph() {
       <Widget className="overflow-y-auto">
         <h3 className="text-lg font-semibold text-gray-300 mb-2">Markers</h3>
         {Object.entries(uniqueMarkers).length > 0 ? (
-          Object.entries(uniqueMarkers).map(([key, marker]) => (
-            <div
-              key={key}
-              className="text-sm font-mono mb-6 cursor-pointer"
-              onMouseEnter={() => setHoveredKey(key)}
-              onMouseLeave={() => setHoveredKey(null)}
-            >
+          Object.entries(uniqueMarkers)
+            .reverse()
+            .map(([key, marker]) => (
               <div
-                className={`font-semibold ${CLASS_COLORS[marker.class].textClass}`}
+                key={key}
+                className="text-sm font-mono mb-6 cursor-pointer"
+                onMouseEnter={() => setHoveredKey(key)}
+                onMouseLeave={() => setHoveredKey(null)}
               >
-                {formatDateTimeRange(marker.start, marker.end)}
+                <div
+                  className={`font-semibold ${CLASS_COLORS[marker.class].textClass}`}
+                >
+                  {formatDateTimeRange(marker.start, marker.end)}
+                </div>
+                <ul className="pl-8 pt-1 list-disc">
+                  {marker.name.map((name, nameIdx) => (
+                    <li key={nameIdx}>{name}</li>
+                  ))}
+                </ul>
               </div>
-              <ul className="pl-8 pt-1 list-disc">
-                {marker.name.map((name, nameIdx) => (
-                  <li key={nameIdx}>{name}</li>
-                ))}
-              </ul>
-            </div>
-          ))
+            ))
         ) : (
           <p>No markers found</p>
         )}
