@@ -101,6 +101,7 @@ export default function SummaryGraph() {
   const [currentInterval, setIntervalParam] = useState("1d");
   const [markers, setMarkers] = useState<MarkerTimeseriesPointData[]>([]);
   const { reloadDate } = useTimer();
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = () => {
@@ -253,30 +254,23 @@ export default function SummaryGraph() {
                 </span>
               )}
             />
-            {Object.keys(uniqueMarkers).map((key, idx) => (
+            {Object.entries(uniqueMarkers).map(([key, marker]) => (
               <ReferenceArea
                 key={key}
-                x1={uniqueMarkers[key].start}
-                x2={uniqueMarkers[key].end}
+                x1={marker.start}
+                x2={marker.end}
                 stroke={
-                  CLASS_COLORS[uniqueMarkers[key].class].stroke ||
-                  "var(--color-slate-700)"
+                  CLASS_COLORS[marker.class].stroke || "var(--color-slate-700)"
                 }
                 strokeWidth={1}
                 strokeDasharray="5"
-                strokeOpacity={0.75}
+                strokeOpacity={hoveredKey === key ? 1 : 0.75}
                 fill={
-                  CLASS_COLORS[uniqueMarkers[key].class].fill ||
-                  "var(--color-slate-800)"
+                  CLASS_COLORS[marker.class].fill || "var(--color-slate-800)"
                 }
-                fillOpacity={0.1}
+                fillOpacity={hoveredKey === key ? 0.5 : 0.1}
                 ifOverflow="hidden"
-                label={{
-                  value: idx + 1,
-                  position: "insideTop",
-                  className: `text-xs font-mono`,
-                  fill: CLASS_COLORS[uniqueMarkers[key].class].stroke,
-                }}
+                className={hoveredKey === key ? "animate-pulse" : ""}
               />
             ))}
 
@@ -297,17 +291,20 @@ export default function SummaryGraph() {
       <Widget className="overflow-y-auto">
         <h3 className="text-lg font-semibold text-gray-300 mb-2">Markers</h3>
         {Object.entries(uniqueMarkers).length > 0 ? (
-          Object.keys(uniqueMarkers).map((key, idx) => (
-            <div key={key} className="text-sm font-mono mb-6">
-              <div className={CLASS_COLORS[uniqueMarkers[key].class].textClass}>
-                <span className="font-semibold">[#{idx + 1}]</span>{" "}
-                {formatDateTimeRange(
-                  uniqueMarkers[key].start,
-                  uniqueMarkers[key].end,
-                )}
+          Object.entries(uniqueMarkers).map(([key, marker]) => (
+            <div
+              key={key}
+              className="text-sm font-mono mb-6 cursor-pointer"
+              onMouseEnter={() => setHoveredKey(key)}
+              onMouseLeave={() => setHoveredKey(null)}
+            >
+              <div
+                className={`font-semibold ${CLASS_COLORS[marker.class].textClass}`}
+              >
+                {formatDateTimeRange(marker.start, marker.end)}
               </div>
               <ul className="pl-8 pt-1 list-disc">
-                {uniqueMarkers[key].name.map((name, nameIdx) => (
+                {marker.name.map((name, nameIdx) => (
                   <li key={nameIdx}>{name}</li>
                 ))}
               </ul>
