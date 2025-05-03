@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 
 interface TimerContextValue {
   timeLeft: number;
+  setTimeLeft: (timeLeft: number) => void;
   reloadDate: Date;
 }
 
@@ -41,7 +42,7 @@ export const TimerProvider: React.FC<TimerProviderProps> = ({ children, interval
   }, [interval]);
 
   return (
-    <TimerContext.Provider value={{ timeLeft, reloadDate }}>
+    <TimerContext.Provider value={{ timeLeft, setTimeLeft, reloadDate }}>
       {children}
     </TimerContext.Provider>
   );

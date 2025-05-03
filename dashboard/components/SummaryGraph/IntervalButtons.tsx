@@ -37,7 +37,7 @@ export default function IntervalButtons({
               `${classes} border border-slate-700 px-3 py-1 font-mono text-sm shadow-md ` +
               (currentInterval === interval
                 ? "bg-gray-800 text-white"
-                : "bg-gray-900 hover:bg-gray-800 hover:shadow-lg")
+                : "bg-gray-900 hover:bg-gray-800 hover:shadow-lg transition-all cursor-pointer")
             }
             aria-pressed={currentInterval === interval}
           >
