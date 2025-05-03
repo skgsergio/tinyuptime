@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@plugin 'tailwind-scrollbar';
+
 :root {
     --parakeet: #27f795;
 }

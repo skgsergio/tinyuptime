@@ -13,7 +13,7 @@ export default function SummaryTable() {
     return <Container className="p-6">No data available</Container>;
 
   return (
-    <Container className="overflow-x-auto">
+    <Container className="scrollbar-thin overflow-x-auto">
       <table className="min-w-full">
         <thead className="bg-gray-700">
           <tr>

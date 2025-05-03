@@ -288,7 +288,7 @@ export default function SummaryGraph() {
           </LineChart>
         </ResponsiveContainer>
       </Widget>
-      <Widget className="overflow-y-auto">
+      <Widget className="scrollbar-thin overflow-y-auto">
         <h3 className="text-lg font-semibold text-gray-300 mb-2">Markers</h3>
         {Object.entries(uniqueMarkers).length > 0 ? (
           Object.entries(uniqueMarkers)
