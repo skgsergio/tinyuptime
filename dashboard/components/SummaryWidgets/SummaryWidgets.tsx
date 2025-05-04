@@ -54,13 +54,13 @@ export default function SummaryWidgets() {
         title="Successful Checks"
         value={totalSuccessful.toString()}
         detail={`(${((totalSuccessful / totalChecks) * 100).toFixed(1)}%)`}
-        valueColorClass="text-green-400"
+        valueColorClass={totalSuccessful !== 0 ? "text-green-400" : undefined}
       />
       <Widget
         title="Failed Checks"
         value={totalFailed.toString()}
         detail={`(${((totalFailed / totalChecks) * 100).toFixed(1)}%)`}
-        valueColorClass="text-red-400"
+        valueColorClass={totalFailed !== 0 ? "text-red-400" : undefined}
       />
       <Widget title="Total Checks" value={totalChecks.toString()} />
     </Container>

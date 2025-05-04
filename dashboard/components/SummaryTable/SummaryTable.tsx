@@ -41,7 +41,15 @@ export default function SummaryTable() {
                 {row.group_name}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-base font-mono">
-                <span className="text-green-400">{row.successful_checks}</span>
+                <span
+                  className={
+                    row.successful_checks !== 0
+                      ? "text-green-400"
+                      : "text-gray-300"
+                  }
+                >
+                  {row.successful_checks}
+                </span>
                 <span className="text-gray-300 text-sm">
                   {" "}
                   (
@@ -52,7 +60,13 @@ export default function SummaryTable() {
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-base font-mono">
-                <span className="text-red-400">{row.failing_checks}</span>
+                <span
+                  className={
+                    row.failing_checks !== 0 ? "text-red-400" : "text-gray-300"
+                  }
+                >
+                  {row.failing_checks}
+                </span>
                 <span className="text-gray-300 text-sm">
                   {" "}
                   ({((row.failing_checks / row.total_checks) * 100).toFixed(1)}
