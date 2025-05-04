@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 
 import {
   LineChart,
@@ -100,8 +100,20 @@ export default function SummaryGraph() {
   const [firstLoad, setFirstLoad] = useState(true);
   const [currentInterval, setIntervalParam] = useState("1d");
   const [markers, setMarkers] = useState<MarkerTimeseriesPointData[]>([]);
-  const { reloadDate } = useTimer();
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
+  const [disabledSeries, toggleDisabledSeries] = useReducer(
+    (state: Set<string>, name: string) => {
+      console.log(state, name);
+      if (state.has(name)) {
+        return state.difference(new Set([name]));
+      } else {
+        return state.union(new Set([name]));
+      }
+    },
+    new Set<string>(),
+  );
+
+  const { reloadDate } = useTimer();
 
   useEffect(() => {
     const fetchData = () => {
@@ -245,10 +257,15 @@ export default function SummaryGraph() {
             />
             <Legend
               iconType="line"
-              formatter={(value, entry, idx) => (
+              onClick={(entry) => toggleDisabledSeries(entry.value)}
+              formatter={(value, _, idx) => (
                 <span
-                  className="text-sm font-mono"
-                  style={{ color: GRAPH_COLORS[idx % GRAPH_COLORS.length] }}
+                  className="text-sm font-mono cursor-pointer"
+                  style={{
+                    color: disabledSeries.has(value)
+                      ? "var(--color-gray-500)"
+                      : GRAPH_COLORS[idx % GRAPH_COLORS.length],
+                  }}
                 >
                   {value}
                 </span>
@@ -283,6 +300,7 @@ export default function SummaryGraph() {
                 strokeWidth={2}
                 dot={false}
                 isAnimationActive={false}
+                hide={disabledSeries.has(group)}
               />
             ))}
           </LineChart>
