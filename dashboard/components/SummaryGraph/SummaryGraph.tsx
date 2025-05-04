@@ -214,7 +214,7 @@ export default function SummaryGraph() {
           currentInterval={currentInterval}
           setIntervalParam={setIntervalParam}
         />
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height="75%">
           <LineChart data={Object.values(chartData)} margin={{ right: 25 }}>
             <XAxis
               className="text-sm font-mono fill-gray-300"
