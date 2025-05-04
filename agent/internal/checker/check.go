@@ -48,7 +48,7 @@ func (ck *Check) IsStale() bool {
 }
 
 func (ck *Check) Run(ctx context.Context) Result {
-	maxRetries := 3
+	maxRetries := 2
 	baseDelay := 2 * time.Second
 
 	res := Result{}
