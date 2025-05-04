@@ -18,11 +18,11 @@ SQL >
         (
             SELECT
                 check_name AS check,
-                min(success) AS success
+                argMax(success, timestamp) AS success
             FROM results
             WHERE
                 timestamp
-                    BETWEEN toStartOfTenMinutes(toDateTime({{ DateTime(job_timestamp) }})) - INTERVAL 10 MINUTE
+                    BETWEEN toStartOfTenMinutes(toDateTime({{ DateTime(job_timestamp) }})) - INTERVAL 20 MINUTE
                     AND toStartOfTenMinutes(toDateTime({{ DateTime(job_timestamp) }}))
             GROUP BY check_name
             ORDER BY check_name
