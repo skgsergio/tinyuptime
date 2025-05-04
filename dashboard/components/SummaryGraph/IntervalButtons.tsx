@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { useCheats } from "@/lib/cheats";
 
-const INTERVALS = ["6h", "12h", "1d", "7d"];
+const INTERVALS = ["6h", "12h", "1d", "2d", "3d", "7d"];
 
 export default function IntervalButtons({
   currentInterval,

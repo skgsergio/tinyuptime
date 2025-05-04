@@ -20,6 +20,8 @@ SQL >
             {% set _hours = 24 %}
         {% elif interval == "2d" %}
             {% set _hours = 48 %}
+        {% elif interval == "3d" %}
+            {% set _hours = 72 %}
         {% elif interval == "7d" %}
             {% set _hours = 168 %}
         {% elif interval == "14d" %}
