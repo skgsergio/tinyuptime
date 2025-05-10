@@ -16,7 +16,7 @@ var (
 	defaultCheckInterval = 120
 	defaultMaxRetries    = 2
 	defaultRetryDelay    = 1 * time.Second
-	defaultTimeout       = 1 * time.Second
+	defaultTimeout       = 2 * time.Second
 )
 
 type Result struct {
