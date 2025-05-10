@@ -14,6 +14,9 @@ import (
 
 var (
 	defaultCheckInterval = 120
+	defaultMaxRetries    = 2
+	defaultRetryDelay    = 1 * time.Second
+	defaultTimeout       = 1 * time.Second
 )
 
 type Result struct {
@@ -32,24 +35,24 @@ type Check struct {
 	AcceptedStatuses *[]int  `json:"accepted_statuses,omitempty" yaml:"accepted_statuses,omitempty"`
 	Keyword          *string `json:"keyword,omitempty" yaml:"keyword,omitempty"`
 	VerifySSL        *bool   `json:"verify_ssl,omitempty" yaml:"verify_ssl,omitempty"`
-	Timeout          *int    `json:"timeout_seconds,omitempty" yaml:"timeout_seconds,omitempty"`
-	Interval         *int    `json:"interval_seconds,omitempty" yaml:"interval_seconds,omitempty"`
+	TimeoutSeconds   *int    `json:"timeout_seconds,omitempty" yaml:"timeout_seconds,omitempty"`
+	IntervalSeconds  *int    `json:"interval_seconds,omitempty" yaml:"interval_seconds,omitempty"`
 	running          bool
 	lastRun          time.Time
 	mutex            sync.Mutex
 }
 
 func (ck *Check) IsStale() bool {
-	if ck.Interval == nil {
-		ck.Interval = &defaultCheckInterval
+	if ck.IntervalSeconds == nil {
+		ck.IntervalSeconds = &defaultCheckInterval
 	}
 
-	return !ck.running && time.Since(ck.lastRun) >= time.Duration(*ck.Interval)*time.Second
+	return !ck.running && time.Since(ck.lastRun) >= time.Duration(*ck.IntervalSeconds)*time.Second
 }
 
 func (ck *Check) Run(ctx context.Context) Result {
-	maxRetries := 2
-	baseDelay := 2 * time.Second
+	maxRetries := defaultMaxRetries
+	retryDelay := defaultRetryDelay
 
 	res := Result{}
 
@@ -60,7 +63,7 @@ func (ck *Check) Run(ctx context.Context) Result {
 		}
 
 		if r < maxRetries {
-			time.Sleep(time.Duration(math.Pow(2, float64(r))) * baseDelay)
+			time.Sleep(time.Duration(math.Pow(2, float64(r))) * retryDelay)
 		}
 	}
 
@@ -92,17 +95,19 @@ func (ck *Check) run(ctx context.Context) Result {
 
 	// Create http client with timeout and insecure TLS options.
 	client := &http.Client{
-		Timeout: 2 * time.Second,
+		Timeout: defaultTimeout,
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: (ck.VerifySSL != nil && !*ck.VerifySSL)},
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: (ck.VerifySSL != nil && !*ck.VerifySSL),
+			},
 		},
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
 		},
 	}
 
-	if ck.Timeout != nil && *ck.Timeout > 0 {
-		client.Timeout = time.Duration(*ck.Timeout) * time.Second
+	if ck.TimeoutSeconds != nil && *ck.TimeoutSeconds > 0 {
+		client.Timeout = time.Duration(*ck.TimeoutSeconds) * time.Second
 	}
 
 	if ck.Host != nil && *ck.Host != "" {
