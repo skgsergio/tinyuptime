@@ -24,6 +24,10 @@ import { useTimer } from "@/contexts/TimerContext";
 import IntervalButtons from "./IntervalButtons";
 import Widget from "./Widget";
 
+const INTERVALS = ["6h", "12h", "1d", "2d", "3d", "7d"];
+const HIDDEN_INTERVALS = ["14d"];
+const DEFAULT_INTERVAL = "1d";
+
 const GRAPH_COLORS = [
   "var(--color-red-400)",
   "var(--color-blue-400)",
@@ -95,10 +99,11 @@ export function uniqueIdMarkerTimeseriesPoint(
 }
 
 export default function SummaryGraph() {
+  const { reloadDate } = useTimer();
+
   const [data, setData] = useState<SummaryTimeseriesPointData[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [firstLoad, setFirstLoad] = useState(true);
-  const [currentInterval, setIntervalParam] = useState("1d");
   const [markers, setMarkers] = useState<MarkerTimeseriesPointData[]>([]);
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const [disabledSeries, toggleDisabledSeries] = useReducer(
@@ -113,7 +118,36 @@ export default function SummaryGraph() {
     new Set<string>(),
   );
 
-  const { reloadDate } = useTimer();
+  const [currentInterval, setCurrentInterval] = useState(DEFAULT_INTERVAL);
+
+  interface SetIntervalParamFn {
+    (interval: string): void;
+    _debounceTimer?: number;
+  }
+
+  const setIntervalParam: SetIntervalParamFn = (interval: string) => {
+    setCurrentInterval(interval);
+
+    if (setIntervalParam._debounceTimer !== undefined) {
+      window.clearTimeout(setIntervalParam._debounceTimer);
+    }
+
+    setIntervalParam._debounceTimer = window.setTimeout(() => {
+      let hash = window.location.hash.replace(/([&#]interval=)[^&]*/g, "");
+      hash = hash.replace(/[&#]$/, "");
+      const prefix =
+        hash && hash !== "#" ? (hash.endsWith("&") ? hash : hash + "&") : "#";
+      window.location.hash = `${prefix}interval=${interval}`;
+    }, 200);
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const match = window.location.hash.match(/interval=([^&#]*)/);
+    if (match && match[1]) {
+      setCurrentInterval(match[1]);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = () => {
@@ -223,6 +257,9 @@ export default function SummaryGraph() {
           Failing Checks Over Time
         </h3>
         <IntervalButtons
+          intervals={INTERVALS}
+          hidden_intervals={HIDDEN_INTERVALS}
+          defaultInterval={DEFAULT_INTERVAL}
           currentInterval={currentInterval}
           setIntervalParam={setIntervalParam}
         />

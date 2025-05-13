@@ -4,12 +4,16 @@ import { useState } from "react";
 
 import { useCheats } from "@/lib/cheats";
 
-const INTERVALS = ["6h", "12h", "1d", "2d", "3d", "7d"];
-
 export default function IntervalButtons({
+  intervals,
+  hidden_intervals,
+  defaultInterval,
   currentInterval,
   setIntervalParam,
 }: {
+  intervals: string[];
+  hidden_intervals: string[];
+  defaultInterval: string;
   currentInterval: string;
   setIntervalParam: (interval: string) => void;
 }) {
@@ -19,15 +23,19 @@ export default function IntervalButtons({
     setCheatsEnabled(!cheatsEnabled);
   });
 
-  const intervals = INTERVALS.slice();
-  if (cheatsEnabled) intervals.push("14d");
+  const _intervals = intervals.slice();
+  if (cheatsEnabled) _intervals.push(...hidden_intervals);
+
+  if (!_intervals.includes(currentInterval)) {
+    currentInterval = defaultInterval;
+  }
 
   return (
     <div className="row flex mb-4 justify-end">
-      {intervals.map((interval, idx) => {
+      {_intervals.map((interval, idx) => {
         let classes = "rounded-none border-r-0";
         if (idx === 0) classes = "rounded-md rounded-r-none border-r-0";
-        else if (idx === intervals.length - 1)
+        else if (idx === _intervals.length - 1)
           classes = "rounded-md rounded-l-none";
         return (
           <button
