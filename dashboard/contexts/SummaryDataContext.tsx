@@ -36,12 +36,11 @@ export const SummaryDataProvider = ({ children }: { children: ReactNode }) => {
   const { reloadDate } = useTimer();
 
   useEffect(() => {
-    const fetchData = () => {
-      fetch(
-        `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/current_summary.json?token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`
-      )
-        .then((response) => {
-          if (!response.ok) {
+    fetch(
+      `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/current_summary.json?token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`
+    )
+      .then((response) => {
+        if (!response.ok) {
             throw new Error('Failed to fetch summary data');
           }
           return response.json();
@@ -54,9 +53,6 @@ export const SummaryDataProvider = ({ children }: { children: ReactNode }) => {
           setError(err.message);
           setFirstLoad(false);
         });
-    };
-
-    fetchData();
   }, [reloadDate]);
 
   return (

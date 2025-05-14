@@ -143,67 +143,61 @@ export default function SummaryGraph() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+
     const match = window.location.hash.match(/interval=([^&#]*)/);
+
     if (match && match[1]) {
       setCurrentInterval(match[1]);
     }
   }, []);
 
   useEffect(() => {
-    const fetchData = () => {
-      fetch(
-        `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/summaries_timeseries.json?interval=${currentInterval}&token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`,
-      )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch summary timeseries data");
-          }
-          return response.json();
-        })
-        .then((json) => {
-          setData(json.data);
-          setFirstLoad(false);
-        })
-        .catch((err) => {
-          setError(err.message);
-          setFirstLoad(false);
-        });
-    };
-
-    fetchData();
+    fetch(
+      `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/summaries_timeseries.json?interval=${currentInterval}&token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`,
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch summary timeseries data");
+        }
+        return response.json();
+      })
+      .then((json) => {
+        setData(json.data);
+        setFirstLoad(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setFirstLoad(false);
+      });
   }, [currentInterval, reloadDate]);
 
   useEffect(() => {
-    const fetchMarkers = () => {
-      fetch(
-        `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/markers_timeseries.json?interval=${currentInterval}&token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`,
-      )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch markers timeseries data");
-          }
-          return response.json();
-        })
-        .then((json) => {
-          // Ensure markers are unique
-          const uniqueMarkers = json.data.filter(
-            (marker: MarkerTimeseriesPointData, index: number) => {
-              return (
-                json.data.findIndex((m: MarkerTimeseriesPointData) =>
-                  areMarkerTimeseriesPointsEqual(m, marker),
-                ) === index
-              );
-            },
-          );
+    fetch(
+      `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/markers_timeseries.json?interval=${currentInterval}&token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`,
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch markers timeseries data");
+        }
+        return response.json();
+      })
+      .then((json) => {
+        // Ensure markers are unique
+        const uniqueMarkers = json.data.filter(
+          (marker: MarkerTimeseriesPointData, index: number) => {
+            return (
+              json.data.findIndex((m: MarkerTimeseriesPointData) =>
+                areMarkerTimeseriesPointsEqual(m, marker),
+              ) === index
+            );
+          },
+        );
 
-          setMarkers(uniqueMarkers);
-        })
-        .catch((err) => {
-          setError(err.message);
-        });
-    };
-
-    fetchMarkers();
+        setMarkers(uniqueMarkers);
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
   }, [currentInterval, reloadDate]);
 
   if (firstLoad) return <Widget className="animate-pulse"></Widget>;
