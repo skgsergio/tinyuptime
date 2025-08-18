@@ -12,7 +12,7 @@ SQL >
             ELSE 'Ungrouped'
         END AS group_name,
         countIf(arrayCount(success -> success, check_results) / length(check_results) > 0.5) AS successful_checks,
-        count() - successful_checks AS failing_checks,
+        toUInt64(count() - successful_checks) AS failing_checks,
         count() AS total_checks
     FROM
         (
