@@ -50,14 +50,14 @@ func (ck *Check) IsStale() bool {
 	return !ck.running && time.Since(ck.lastRun) >= time.Duration(*ck.IntervalSeconds)*time.Second
 }
 
-func (ck *Check) Run(ctx context.Context) Result {
+func (ck *Check) RunWithRetries(ctx context.Context) Result {
 	maxRetries := defaultMaxRetries
 	retryDelay := defaultRetryDelay
 
 	res := Result{}
 
 	for r := 1; r <= maxRetries; r++ {
-		res = ck.run(ctx)
+		res = ck.Run(ctx)
 		if res.Success {
 			break
 		}
@@ -70,7 +70,7 @@ func (ck *Check) Run(ctx context.Context) Result {
 	return res
 }
 
-func (ck *Check) run(ctx context.Context) Result {
+func (ck *Check) Run(ctx context.Context) Result {
 	ck.mutex.Lock()
 	ck.running = true
 

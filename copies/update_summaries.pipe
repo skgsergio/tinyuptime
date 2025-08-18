@@ -22,7 +22,7 @@ SQL >
             FROM results
             WHERE
                 timestamp
-                    BETWEEN toStartOfTenMinutes(toDateTime({{ DateTime(job_timestamp) }})) - INTERVAL 20 MINUTE
+                    BETWEEN toStartOfTenMinutes(toDateTime({{ DateTime(job_timestamp) }})) - INTERVAL 15 MINUTE
                     AND toStartOfTenMinutes(toDateTime({{ DateTime(job_timestamp) }}))
             GROUP BY check_name
             ORDER BY check_name
