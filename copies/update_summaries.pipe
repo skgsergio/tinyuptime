@@ -11,14 +11,14 @@ SQL >
             THEN splitByString(' - ', check_name)[1]
             ELSE 'Ungrouped'
         END AS group_name,
-        total_checks - failing_checks AS successful_checks,
-        countIf(arrayAll(success -> success = false, last_three)) AS failing_checks,
+        countIf(arrayCount(success -> success, check_results) / length(check_results) > 0.5) AS successful_checks,
+        count() - successful_checks AS failing_checks,
         count() AS total_checks
     FROM
         (
             SELECT
                 check_name,
-                arrayMap((_, success) -> success, groupArraySorted(3)((-toUInt64(timestamp), success))) AS last_three
+                groupArray(success) AS check_results
             FROM results
             WHERE
                 timestamp
