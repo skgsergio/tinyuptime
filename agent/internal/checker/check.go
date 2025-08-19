@@ -8,6 +8,7 @@ import (
 	"io"
 	"math"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 )
@@ -89,7 +90,7 @@ func (ck *Check) Run(ctx context.Context) Result {
 	req, err := http.NewRequestWithContext(ctx, "GET", ck.URL, nil)
 	if err != nil {
 		result.Success = false
-		result.Error = err.Error()
+		result.Error = fmt.Sprintf("Request creation failed: %s", err.Error())
 		return result
 	}
 
@@ -118,8 +119,35 @@ func (ck *Check) Run(ctx context.Context) Result {
 	start := time.Now()
 	resp, err := client.Do(req)
 	if err != nil {
+		// Crappy error identification to avoid leaking too much information
+
+		if strings.Contains(err.Error(), "context deadline exceeded") {
+			result.Error = "Request failed: context deadline exceeded"
+		} else if strings.Contains(err.Error(), "context canceled") {
+			result.Error = "Request failed: context canceled"
+		} else if strings.Contains(err.Error(), "no such host") {
+			result.Error = "Request failed: no such host"
+		} else if strings.Contains(err.Error(), "no route to host") {
+			result.Error = "Request failed: no route to host"
+		} else if strings.Contains(err.Error(), "network is unreachable") {
+			result.Error = "Request failed: network is unreachable"
+		} else if strings.Contains(err.Error(), "connection refused") {
+			result.Error = "Request failed: connection refused"
+		} else if strings.Contains(err.Error(), "connection reset by peer") {
+			result.Error = "Request failed: connection reset by peer"
+		} else if strings.Contains(err.Error(), "i/o timeout") {
+			result.Error = "Request failed: i/o timeout"
+		} else if strings.Contains(err.Error(), "TLS handshake") {
+			result.Error = "Request failed: TLS handshake error"
+		} else if strings.Contains(err.Error(), "TLS certificate") {
+			result.Error = "Request failed: TLS certificate error"
+		} else if strings.Contains(err.Error(), "EOF") {
+			result.Error = "Request failed: EOF"
+		} else {
+			result.Error = fmt.Sprintf("Request failed: %s", err.Error())
+		}
+
 		result.Success = false
-		result.Error = err.Error()
 		return result
 	}
 	defer resp.Body.Close()
@@ -156,7 +184,7 @@ func (ck *Check) Run(ctx context.Context) Result {
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			result.Success = false
-			result.Error = err.Error()
+			result.Error = fmt.Sprintf("Failed reading response body: %s", err.Error())
 			return result
 		}
 
