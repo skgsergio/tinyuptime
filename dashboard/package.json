@@ -10,22 +10,22 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
-    "next": "15.3.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "recharts": "^2.15.3"
+    "next": "^15",
+    "react": "^19",
+    "react-dom": "^19",
+    "recharts": "^3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.3.1",
-    "eslint-config-prettier": "^10.1.2",
-    "eslint-plugin-prettier": "^5.2.6",
-    "tailwind-scrollbar": "^4.0.2",
+    "eslint-config-next": "^15",
+    "eslint-config-prettier": "^10",
+    "eslint-plugin-prettier": "^5",
+    "tailwind-scrollbar": "^4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

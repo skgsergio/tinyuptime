@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-import { useTimer } from '@/contexts/TimerContext';
+import { useReload } from '@/contexts/TimerContext';
 
 
 export interface SummaryData {
@@ -33,7 +33,7 @@ export const SummaryDataProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<SummaryData[] | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [firstLoad, setFirstLoad] = useState(true);
-  const { reloadDate } = useTimer();
+  const { reloadDate } = useReload();
 
   useEffect(() => {
     fetch(

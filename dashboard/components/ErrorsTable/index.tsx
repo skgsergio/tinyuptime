@@ -1,3 +1,3 @@
-import SummaryTable from "./SummaryTable";
+import ErrorsTable from "./ErrorsTable";
 
-export default SummaryTable;
+export default ErrorsTable;

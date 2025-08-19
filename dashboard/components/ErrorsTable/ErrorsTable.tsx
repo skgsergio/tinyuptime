@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-import { useTimer } from "@/contexts/TimerContext";
+import { useReload } from "@/contexts/TimerContext";
 
 import { formatDateTime } from "@/lib/dateUtils";
 import Container from "./Container";
@@ -14,12 +14,11 @@ export interface ErrorsData {
   last_error_timestamp: number;
 }
 
-export default function SummaryTable() {
-  const { reloadDate } = useTimer();
-
+export default function ErrorsTable() {
   const [data, setData] = useState<ErrorsData[] | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
-  const [firstLoad, setFirstLoading] = useState(true);
+  const [firstLoad, setFirstLoad] = useState(true);
+  const { reloadDate } = useReload();
 
   useEffect(() => {
     fetch(
@@ -33,11 +32,11 @@ export default function SummaryTable() {
       })
       .then((json) => {
         setData(json.data);
-        setFirstLoading(false);
+        setFirstLoad(false);
       })
       .catch((err) => {
         setError(err.message);
-        setFirstLoading(false);
+        setFirstLoad(false);
       });
   }, [reloadDate]);
 

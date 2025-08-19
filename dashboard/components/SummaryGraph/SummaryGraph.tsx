@@ -19,7 +19,7 @@ import {
   formatHour,
   formatDateTimeRange,
 } from "@/lib/dateUtils";
-import { useTimer } from "@/contexts/TimerContext";
+import { useReload } from "@/contexts/TimerContext";
 
 import IntervalButtons from "./IntervalButtons";
 import Widget from "./Widget";
@@ -99,7 +99,7 @@ export function uniqueIdMarkerTimeseriesPoint(
 }
 
 export default function SummaryGraph() {
-  const { reloadDate } = useTimer();
+  const { reloadDate } = useReload();
 
   const [data, setData] = useState<SummaryTimeseriesPointData[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -288,7 +288,11 @@ export default function SummaryGraph() {
             />
             <Legend
               iconType="line"
-              onClick={(entry) => toggleDisabledSeries(entry.value)}
+              onClick={(entry) => {
+                if (entry.value) {
+                  toggleDisabledSeries(entry.value);
+                }
+              }}
               formatter={(value, _, idx) => (
                 <span
                   className="text-sm font-mono cursor-pointer"

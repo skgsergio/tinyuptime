@@ -1,10 +1,10 @@
 "use client";
 
-import { useTimer } from "@/contexts/TimerContext";
+import { useTimerDisplay } from "@/contexts/TimerContext";
 import RefreshIcon from "@/components/Icons/RefreshIcon";
 
 export default function PageRefresh() {
-  const { timeLeft, setTimeLeft } = useTimer();
+  const { timeLeft, setTimeLeft } = useTimerDisplay();
 
   const minutes = Math.floor(timeLeft / 60000);
   const seconds = Math.floor((timeLeft % 60000) / 1000);
