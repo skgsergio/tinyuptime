@@ -7,25 +7,24 @@ NODE summary_for_active_checks
 SQL >
     SELECT
         CASE
-            WHEN length(splitByString(' - ', check)) == 2 THEN splitByString(' - ', check)[1]
+            WHEN length(splitByString(' - ', check_name)) == 2 THEN splitByString(' - ', check_name)[1]
             ELSE 'Ungrouped'
         END AS group_name,
-        countIf(success = true) AS successful_checks,
-        countIf(success = false) AS failing_checks,
+        countIf(arrayCount(success -> success, check_results) / length(check_results) > 0.5) AS successful_checks,
+        toUInt64(count() - successful_checks) AS failing_checks,
         count() AS total_checks,
         max(last_check_timestamp) AS last_check_timestamp
     FROM
         (
             SELECT
-                check_name AS check,
+                check_name,
                 toUnixTimestamp(max(timestamp)) AS last_check_timestamp,
-                argMax(success, timestamp) AS success
+                arrayMap((_, success) -> success, groupArraySorted(3)((-toUnixTimestamp(timestamp), success))) AS check_results
             FROM results
-            WHERE timestamp >= now() - INTERVAL 30 MINUTE
+            WHERE timestamp >= now() - INTERVAL 15 MINUTE
             GROUP BY check_name
             ORDER BY check_name
         )
     GROUP BY group_name
-    ORDER BY group_name
 
 TYPE ENDPOINT
