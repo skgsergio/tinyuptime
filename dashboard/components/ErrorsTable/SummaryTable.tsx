@@ -43,8 +43,7 @@ export default function SummaryTable() {
 
   if (firstLoad) return <Container className="animate-pulse"></Container>;
   if (error) return <Container className="p-6 text-red-400">{error}</Container>;
-  if (!data)
-    return <Container className="p-6">No data available</Container>;
+  if (!data) return <Container className="p-6">No data available</Container>;
 
   return (
     <Container className="scrollbar-thin overflow-x-auto">
