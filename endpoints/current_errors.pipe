@@ -1,0 +1,31 @@
+DESCRIPTION >
+    Retrieve a summary of the errors per group for active checks
+
+TOKEN "public_dashboard" READ
+
+NODE error_summary_for_active_checks
+SQL >
+    SELECT
+        CASE
+            WHEN length(splitByString(' - ', check_name)) == 2 THEN splitByString(' - ', check_name)[1]
+            ELSE 'Ungrouped'
+        END AS group_name,
+        count() AS total_checks,
+        last_error AS error,
+        max(last_timestamp) AS last_error_timestamp
+    FROM
+        (
+            SELECT
+                check_name,
+                toUnixTimestamp(max(timestamp)) AS last_timestamp,
+                argMax(error, timestamp) AS last_error
+            FROM results
+            WHERE timestamp >= now() - INTERVAL 15 MINUTE
+            GROUP BY check_name
+            ORDER BY check_name
+        )
+    WHERE last_error IS NOT NULL
+    GROUP BY group_name, last_error
+    ORDER BY group_name, last_error
+
+TYPE ENDPOINT
