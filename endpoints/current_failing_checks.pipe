@@ -5,22 +5,18 @@ TOKEN "public_dashboard" READ
 
 NODE failing_checks_for_active_checks
 SQL >
-    SELECT * EXCEPT success
-    FROM (
-        SELECT
-            check_name AS check,
-            toUnixTimestamp(max(timestamp)) AS last_check_timestamp,
-            argMax(success, timestamp) AS success,
-            argMax(ifNull(http_status, NaN), timestamp) AS http_status,
-            argMax(ifNull(duration_seconds, NaN), timestamp) AS duration_seconds,
-            argMax(ifNull(error, ''), timestamp) AS error
-        FROM results
-        WHERE
-            timestamp >= now() - INTERVAL 1 HOUR
-            AND hide_details = false
-        GROUP BY check_name
-    )
-    WHERE success = false
-    ORDER BY check
+    SELECT
+        check_name,
+        toUnixTimestamp(max(timestamp)) AS last_check_timestamp,
+        argMax(ifNull(http_status, NaN), timestamp) AS http_status,
+        argMax(ifNull(duration_seconds, NaN), timestamp) AS duration_seconds,
+        argMax(ifNull(error, ''), timestamp) AS error
+    FROM results
+    WHERE
+        timestamp >= now() - INTERVAL 1 HOUR
+        AND hide_details = false
+    GROUP BY check_name
+    HAVING argMax(success, timestamp) = false
+    ORDER BY check_name
 
 TYPE ENDPOINT
