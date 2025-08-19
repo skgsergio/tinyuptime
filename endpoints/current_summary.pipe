@@ -26,5 +26,6 @@ SQL >
             ORDER BY check_name
         )
     GROUP BY group_name
+    ORDER BY group_name
 
 TYPE ENDPOINT
