@@ -10,7 +10,7 @@ SQL >
             WHEN length(splitByString(' - ', check_name)) == 2 THEN splitByString(' - ', check_name)[1]
             ELSE 'Ungrouped'
         END AS group_name,
-        count() AS total_checks,
+        count() AS failing_checks,
         last_error AS error,
         max(last_timestamp) AS last_error_timestamp
     FROM
@@ -25,7 +25,7 @@ SQL >
             ORDER BY check_name
         )
     WHERE last_error IS NOT NULL
-    GROUP BY group_name, last_error
-    ORDER BY group_name, last_error
+    GROUP BY group_name, failing_checks DESC, last_error
+    ORDER BY group_name, failing_checks DESC, last_error
 
 TYPE ENDPOINT
