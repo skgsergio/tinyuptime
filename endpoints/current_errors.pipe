@@ -17,14 +17,14 @@ SQL >
         (
             SELECT
                 check_name,
+                arrayMap((_, success) -> success, groupArraySorted(3)((-toUnixTimestamp(timestamp), success))) AS check_results,
                 toUnixTimestamp(max(timestamp)) AS last_timestamp,
                 argMax(error, timestamp) AS last_error
             FROM results
             WHERE timestamp >= now() - INTERVAL 15 MINUTE
             GROUP BY check_name
-            ORDER BY check_name
+            HAVING arrayCount(success -> success, check_results) / length(check_results) < 0.5
         )
-    WHERE last_error IS NOT NULL
     GROUP BY group_name, last_error
     ORDER BY group_name, failing_checks DESC, last_error
 

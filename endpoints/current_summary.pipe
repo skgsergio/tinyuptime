@@ -23,7 +23,6 @@ SQL >
             FROM results
             WHERE timestamp >= now() - INTERVAL 15 MINUTE
             GROUP BY check_name
-            ORDER BY check_name
         )
     GROUP BY group_name
     ORDER BY group_name
