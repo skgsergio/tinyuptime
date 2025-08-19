@@ -25,7 +25,7 @@ SQL >
             ORDER BY check_name
         )
     WHERE last_error IS NOT NULL
-    GROUP BY group_name, failing_checks DESC, last_error
+    GROUP BY group_name, last_error
     ORDER BY group_name, failing_checks DESC, last_error
 
 TYPE ENDPOINT
