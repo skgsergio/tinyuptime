@@ -98,7 +98,7 @@ export function uniqueIdMarkerTimeseriesPoint(
   return `${m.start}-${m.end}-${m.class}`;
 }
 
-export default function SummaryGraph() {
+export default function HistoryGraph() {
   const { reloadDate } = useReload();
 
   const [data, setData] = useState<SummaryTimeseriesPointData[]>([]);
@@ -247,9 +247,6 @@ export default function SummaryGraph() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <Widget className="md:col-span-2">
-        <h3 className="text-lg font-semibold text-gray-300 mb-2">
-          Failing Checks Over Time
-        </h3>
         <IntervalButtons
           intervals={INTERVALS}
           hidden_intervals={HIDDEN_INTERVALS}
@@ -257,7 +254,7 @@ export default function SummaryGraph() {
           currentInterval={currentInterval}
           setIntervalParam={setIntervalParam}
         />
-        <ResponsiveContainer width="100%" height="75%">
+        <ResponsiveContainer width="100%" height="90%">
           <LineChart data={Object.values(chartData)} margin={{ right: 25 }}>
             <XAxis
               className="text-sm font-mono fill-gray-300"

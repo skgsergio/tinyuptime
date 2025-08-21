@@ -8,7 +8,7 @@ import PageRefresh from "@/components/PageRefresh";
 import { SummaryDataProvider } from "@/contexts/SummaryDataContext";
 import SummaryTable from "@/components/SummaryTable";
 import SummaryWidgets from "@/components/SummaryWidgets";
-import SummaryGraph from "@/components/SummaryGraph";
+import HistoryGraph from "@/components/HistoryGraph";
 import ErrorsTable from "@/components/ErrorsTable";
 import { TimerProvider } from "@/contexts/TimerContext";
 
@@ -51,11 +51,13 @@ export default function Home() {
           <SummaryTable />
         </SummaryDataProvider>
 
-        <SummaryGraph />
-
         <h2 className="text-2xl font-bold mb-4 text-white">Last Errors</h2>
 
         <ErrorsTable />
+
+        <h2 className="text-2xl font-bold mb-4 text-white">History Graph</h2>
+
+        <HistoryGraph />
 
         <PageRefresh />
       </TimerProvider>
