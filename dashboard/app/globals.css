@@ -15,7 +15,11 @@ table th {
 }
 
 table td {
-    @apply px-6 py-3 whitespace-nowrap text-base;
+    @apply px-6 py-3 whitespace-nowrap text-base font-mono text-gray-300;
+}
+
+table td:first-child {
+    @apply font-medium text-gray-100;
 }
 
 table thead {

@@ -27,8 +27,8 @@ export default function SummaryTable() {
         <tbody>
           {data.map((row: SummaryData, index: number) => (
             <tr key={index}>
-              <td className="font-medium text-gray-100">{row.group_name}</td>
-              <td className="font-mono">
+              <td>{row.group_name}</td>
+              <td>
                 <span
                   className={
                     row.successful_checks !== 0
@@ -47,7 +47,7 @@ export default function SummaryTable() {
                   %)
                 </span>
               </td>
-              <td className="font-mono">
+              <td>
                 <span
                   className={
                     row.failing_checks !== 0 ? "text-red-400" : "text-gray-300"
@@ -61,10 +61,10 @@ export default function SummaryTable() {
                   %)
                 </span>
               </td>
-              <td className="text-gray-300 font-mono">
+              <td>
                 {row.total_checks}
               </td>
-              <td className="text-gray-300 font-mono">
+              <td>
                 {formatDateTime(row.last_check_timestamp)}
               </td>
             </tr>

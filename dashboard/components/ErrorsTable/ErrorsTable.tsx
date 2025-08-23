@@ -66,16 +66,16 @@ export default function ErrorsTable() {
         <tbody>
           {data.map((row: ErrorsData, index: number) => (
             <tr key={index}>
-              <td className="font-medium text-gray-100">
+              <td>
                 {row.group_name}
               </td>
-              <td className="font-mono">
+              <td>
                 {row.failing_checks}
               </td>
-              <td className="font-mono overflow-hidden text-ellipsis max-w-[750px]">
+              <td className="overflow-hidden text-ellipsis max-w-[750px]">
                 {row.error}
               </td>
-              <td className="font-mono">
+              <td>
                 {formatDateTime(row.last_error_timestamp)}
               </td>
             </tr>
