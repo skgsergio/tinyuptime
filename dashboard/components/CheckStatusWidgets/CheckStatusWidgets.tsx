@@ -110,6 +110,9 @@ export default function CheckStatusWidgets() {
                     successStatuses={check.success_statuses}
                     timestamps={check.timestamps}
                   />
+                  <div className="text-xs font-mono block min-h-4 mt-2">
+                    {check.last_check_error}
+                  </div>
                 </div>
               );
             })}
