@@ -15,32 +15,20 @@ export default function SummaryTable() {
   return (
     <Container className="scrollbar-thin overflow-x-auto">
       <table className="min-w-full">
-        <thead className="bg-gray-700">
+        <thead>
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-              Monitor Group
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-              Success
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-              Failures
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-              Total
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-              Last Check
-            </th>
+            <th>Monitor Group</th>
+            <th>Success</th>
+            <th>Failures</th>
+            <th>Total</th>
+            <th>Last Check</th>
           </tr>
         </thead>
-        <tbody className="bg-gray-800 divide-y divide-gray-700">
+        <tbody>
           {data.map((row: SummaryData, index: number) => (
-            <tr key={index} className="hover:bg-gray-700">
-              <td className="px-6 py-4 whitespace-nowrap text-base font-medium text-gray-100">
-                {row.group_name}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-base font-mono">
+            <tr key={index}>
+              <td className="font-medium text-gray-100">{row.group_name}</td>
+              <td className="font-mono">
                 <span
                   className={
                     row.successful_checks !== 0
@@ -59,7 +47,7 @@ export default function SummaryTable() {
                   %)
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-base font-mono">
+              <td className="font-mono">
                 <span
                   className={
                     row.failing_checks !== 0 ? "text-red-400" : "text-gray-300"
@@ -73,10 +61,10 @@ export default function SummaryTable() {
                   %)
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-base text-gray-300 font-mono">
+              <td className="text-gray-300 font-mono">
                 {row.total_checks}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-base text-gray-300 font-mono">
+              <td className="text-gray-300 font-mono">
                 {formatDateTime(row.last_check_timestamp)}
               </td>
             </tr>

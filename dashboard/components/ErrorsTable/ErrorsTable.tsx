@@ -47,35 +47,35 @@ export default function ErrorsTable() {
   return (
     <Container className="scrollbar-thin overflow-x-auto">
       <table className="min-w-full">
-        <thead className="bg-gray-700">
+        <thead>
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+            <th>
               Monitor Group
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+            <th>
               Failing Checks
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+            <th>
               Error
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+            <th>
               Last Error Time
             </th>
           </tr>
         </thead>
-        <tbody className="bg-gray-800 divide-y divide-gray-700">
+        <tbody>
           {data.map((row: ErrorsData, index: number) => (
-            <tr key={index} className="hover:bg-gray-700">
-              <td className="px-6 py-4 whitespace-nowrap text-base font-medium text-gray-100">
+            <tr key={index}>
+              <td className="font-medium text-gray-100">
                 {row.group_name}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-base font-mono">
+              <td className="font-mono">
                 {row.failing_checks}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-base font-mono overflow-hidden text-ellipsis max-w-[750px]">
+              <td className="font-mono overflow-hidden text-ellipsis max-w-[750px]">
                 {row.error}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-base font-mono">
+              <td className="font-mono">
                 {formatDateTime(row.last_error_timestamp)}
               </td>
             </tr>

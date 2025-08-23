@@ -9,7 +9,7 @@ export default function Container({
 }) {
   return (
     <div
-      className={`rounded-lg shadow-lg bg-gray-800 min-h-80 mb-6 ${className || ""}`}
+      className={`rounded-lg shadow-lg bg-gray-800 min-h-60 mb-6 ${className || ""}`}
     >
       {children}
     </div>
