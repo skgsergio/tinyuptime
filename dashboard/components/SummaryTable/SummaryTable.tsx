@@ -61,12 +61,8 @@ export default function SummaryTable() {
                   %)
                 </span>
               </td>
-              <td>
-                {row.total_checks}
-              </td>
-              <td>
-                {formatDateTime(row.last_check_timestamp)}
-              </td>
+              <td>{row.total_checks}</td>
+              <td>{formatDateTime(row.last_check_timestamp)}</td>
             </tr>
           ))}
         </tbody>

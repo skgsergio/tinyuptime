@@ -49,35 +49,21 @@ export default function ErrorsTable() {
       <table className="min-w-full">
         <thead>
           <tr>
-            <th>
-              Monitor Group
-            </th>
-            <th>
-              Failing Checks
-            </th>
-            <th>
-              Error
-            </th>
-            <th>
-              Last Error Time
-            </th>
+            <th>Monitor Group</th>
+            <th>Failing Checks</th>
+            <th>Error</th>
+            <th>Last Error Time</th>
           </tr>
         </thead>
         <tbody>
           {data.map((row: ErrorsData, index: number) => (
             <tr key={index}>
-              <td>
-                {row.group_name}
-              </td>
-              <td>
-                {row.failing_checks}
-              </td>
+              <td>{row.group_name}</td>
+              <td>{row.failing_checks}</td>
               <td className="overflow-hidden text-ellipsis max-w-[750px]">
                 {row.error}
               </td>
-              <td>
-                {formatDateTime(row.last_error_timestamp)}
-              </td>
+              <td>{formatDateTime(row.last_error_timestamp)}</td>
             </tr>
           ))}
         </tbody>
