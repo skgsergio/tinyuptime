@@ -63,9 +63,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${geistSans.variable} ${geistMono.variable} scrollbar scrollbar-thumb-gray-600 scrollbar-track-gray-800`}
+      className={`dark ${geistSans.variable} ${geistMono.variable}`}
     >
-      <body className="bg-gray-900 text-gray-300">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }
