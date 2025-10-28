@@ -118,7 +118,14 @@ export default function HistoryGraph() {
     new Set<string>(),
   );
 
-  const [currentInterval, setCurrentInterval] = useState(DEFAULT_INTERVAL);
+  // Initialize state with URL parameter if available
+  const getInitialInterval = () => {
+    if (typeof window === "undefined") return DEFAULT_INTERVAL;
+    const match = window.location.hash.match(/interval=([^&#]*)/);
+    return match && match[1] ? match[1] : DEFAULT_INTERVAL;
+  };
+
+  const [currentInterval, setCurrentInterval] = useState(getInitialInterval);
 
   interface SetIntervalParamFn {
     (interval: string): void;
@@ -140,16 +147,6 @@ export default function HistoryGraph() {
       window.location.hash = `${prefix}interval=${interval}`;
     }, 200);
   };
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const match = window.location.hash.match(/interval=([^&#]*)/);
-
-    if (match && match[1]) {
-      setCurrentInterval(match[1]);
-    }
-  }, []);
 
   useEffect(() => {
     fetch(

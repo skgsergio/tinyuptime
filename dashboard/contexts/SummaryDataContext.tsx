@@ -1,9 +1,14 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 
-import { useReload } from '@/contexts/TimerContext';
-
+import { useReload } from "@/contexts/TimerContext";
 
 export interface SummaryData {
   group_name: string;
@@ -19,12 +24,14 @@ interface SummaryDataContextType {
   error: string | null;
 }
 
-const SummaryDataContext = createContext<SummaryDataContextType | undefined>(undefined);
+const SummaryDataContext = createContext<SummaryDataContextType | undefined>(
+  undefined,
+);
 
 export const useSummaryData = () => {
   const context = useContext(SummaryDataContext);
   if (!context) {
-    throw new Error('useSummaryData must be used within a SummaryDataProvider');
+    throw new Error("useSummaryData must be used within a SummaryDataProvider");
   }
   return context;
 };
@@ -37,22 +44,22 @@ export const SummaryDataProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     fetch(
-      `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/current_summary.json?token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`
+      `${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_HOST}/v0/pipes/current_summary.json?token=${process.env.NEXT_PUBLIC_TINYBIRD_TINYUPTIME_PUBLIC_DASHBOARD_TOKEN}`,
     )
       .then((response) => {
         if (!response.ok) {
-            throw new Error('Failed to fetch summary data');
-          }
-          return response.json();
-        })
-        .then((json) => {
-          setData(json.data);
-          setFirstLoad(false);
-        })
-        .catch((err) => {
-          setError(err.message);
-          setFirstLoad(false);
-        });
+          throw new Error("Failed to fetch summary data");
+        }
+        return response.json();
+      })
+      .then((json) => {
+        setData(json.data);
+        setFirstLoad(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setFirstLoad(false);
+      });
   }, [reloadDate]);
 
   return (

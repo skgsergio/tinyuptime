@@ -1,6 +1,14 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode, useCallback, useMemo } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+  useCallback,
+  useMemo,
+} from "react";
 
 interface ReloadContextValue {
   reloadDate: Date;
@@ -13,7 +21,9 @@ interface TimerDisplayValue {
 }
 
 const ReloadContext = createContext<ReloadContextValue | undefined>(undefined);
-const TimerDisplayContext = createContext<TimerDisplayValue | undefined>(undefined);
+const TimerDisplayContext = createContext<TimerDisplayValue | undefined>(
+  undefined,
+);
 
 export function useReload() {
   const context = useContext(ReloadContext);
@@ -42,7 +52,7 @@ export function useTimer() {
 
   return {
     ...reloadContext,
-    ...timerContext
+    ...timerContext,
   };
 }
 
@@ -51,7 +61,10 @@ interface TimerProviderProps {
   interval: number;
 }
 
-export const TimerProvider: React.FC<TimerProviderProps> = ({ children, interval }) => {
+export const TimerProvider: React.FC<TimerProviderProps> = ({
+  children,
+  interval,
+}) => {
   const [reloadDate, setReloadDate] = useState(new Date());
   const [timeLeft, setTimeLeft] = useState(interval);
 
@@ -60,15 +73,21 @@ export const TimerProvider: React.FC<TimerProviderProps> = ({ children, interval
     setTimeLeft(interval);
   }, [interval]);
 
-  const reloadContextValue = useMemo(() => ({
-    reloadDate,
-    triggerReload
-  }), [reloadDate, triggerReload]);
+  const reloadContextValue = useMemo(
+    () => ({
+      reloadDate,
+      triggerReload,
+    }),
+    [reloadDate, triggerReload],
+  );
 
-  const timerDisplayContextValue = useMemo(() => ({
-    timeLeft,
-    setTimeLeft
-  }), [timeLeft, setTimeLeft]);
+  const timerDisplayContextValue = useMemo(
+    () => ({
+      timeLeft,
+      setTimeLeft,
+    }),
+    [timeLeft, setTimeLeft],
+  );
 
   useEffect(() => {
     const timer = setInterval(() => {
