@@ -10,6 +10,7 @@ import SummaryTable from "@/components/SummaryTable";
 import SummaryWidgets from "@/components/SummaryWidgets";
 import HistoryGraph from "@/components/HistoryGraph";
 import ErrorsTable from "@/components/ErrorsTable";
+import Checker from "@/components/Checker";
 import { TimerProvider } from "@/contexts/TimerContext";
 
 export default function Home() {
@@ -58,6 +59,10 @@ export default function Home() {
         <h2 className="text-2xl font-bold mb-4 text-white">History Graph</h2>
 
         <HistoryGraph />
+
+        <h2 className="text-2xl font-bold mb-4 text-white">Checker</h2>
+
+        <Checker />
 
         <PageRefresh />
       </TimerProvider>
