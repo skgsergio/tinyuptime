@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Container from "./Container";
 import ResolutionContainer from "./ResolutionContainer";
 
@@ -26,7 +26,18 @@ export default function Checker() {
   const [result, setResult] = useState<CheckerResult | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const isIPAddress = (input: string): boolean => {
+  // Function to update URL hash with check parameter
+  const updateUrlHash = (checkUrl: string) => {
+    if (typeof window === "undefined") return;
+
+    let hash = window.location.hash.replace(/([&#]check=)[^&]*/g, "");
+    hash = hash.replace(/[&#]$/, "");
+    const prefix =
+      hash && hash !== "#" ? (hash.endsWith("&") ? hash : hash + "&") : "#";
+    window.location.hash = `${prefix}check=${encodeURIComponent(checkUrl)}`;
+  };
+
+  const isIPAddress = useCallback((input: string): boolean => {
     // Check for IPv4
     const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
     if (ipv4Regex.test(input)) {
@@ -43,35 +54,38 @@ export default function Checker() {
     }
 
     return false;
-  };
+  }, []);
 
-  const extractHostname = (input: string): string | null => {
-    // If it's already an IP address, return it directly
-    if (isIPAddress(input)) {
-      return input;
-    }
-
-    // If it's a raw IPv6 address, return it directly
-    if (input.includes(":") && !input.includes("://")) {
-      return input;
-    }
-
-    try {
-      // Add protocol if missing
-      const fullUrl = input.startsWith("http") ? input : `https://${input}`;
-      const urlObj = new URL(fullUrl);
-      let hostname = urlObj.hostname;
-
-      // Remove brackets from IPv6 addresses in URLs
-      if (hostname.startsWith("[") && hostname.endsWith("]")) {
-        hostname = hostname.slice(1, -1);
+  const extractHostname = useCallback(
+    (input: string): string | null => {
+      // If it's already an IP address, return it directly
+      if (isIPAddress(input)) {
+        return input;
       }
 
-      return hostname;
-    } catch {
-      return null;
-    }
-  };
+      // If it's a raw IPv6 address, return it directly
+      if (input.includes(":") && !input.includes("://")) {
+        return input;
+      }
+
+      try {
+        // Add protocol if missing
+        const fullUrl = input.startsWith("http") ? input : `https://${input}`;
+        const urlObj = new URL(fullUrl);
+        let hostname = urlObj.hostname;
+
+        // Remove brackets from IPv6 addresses in URLs
+        if (hostname.startsWith("[") && hostname.endsWith("]")) {
+          hostname = hostname.slice(1, -1);
+        }
+
+        return hostname;
+      } catch {
+        return null;
+      }
+    },
+    [isIPAddress],
+  );
 
   const resolveDNS = useCallback(
     async (hostname: string): Promise<{ ipv4: string[]; ipv6: string[] }> => {
@@ -150,6 +164,9 @@ export default function Checker() {
     setLoading(true);
     setResult(null);
 
+    // Update URL hash with the URL being checked
+    updateUrlHash(url.trim());
+
     try {
       const hostname = extractHostname(url);
 
@@ -193,7 +210,77 @@ export default function Checker() {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  // Auto-run check on load if URL hash contains check parameter
+  useEffect(() => {
+    // Get URL from hash on client-side only
+    const getInitialUrl = () => {
+      if (typeof window === "undefined") return "";
+      const match = window.location.hash.match(/check=([^&#]*)/);
+      return match && match[1] ? decodeURIComponent(match[1]) : "";
+    };
+
+    const initialUrl = getInitialUrl();
+    if (initialUrl) {
+      setUrl(initialUrl);
+
+      // Create a separate async function to avoid dependency issues
+      const runInitialCheck = async () => {
+        if (!initialUrl.trim()) return;
+
+        setLoading(true);
+        setResult(null);
+
+        // Update URL hash with the URL being checked
+        updateUrlHash(initialUrl.trim());
+
+        try {
+          const hostname = extractHostname(initialUrl);
+
+          if (!hostname) {
+            setResult({
+              hostname: initialUrl,
+              ipv4: [],
+              ipv6: [],
+              error: "Invalid URL format",
+            });
+            return;
+          }
+
+          // Check if it's already an IP address
+          if (isIPAddress(hostname)) {
+            const isIPv6 = hostname.includes(":");
+            setResult({
+              hostname, // Display the hostname as entered by the user
+              ipv4: isIPv6 ? [] : [hostname],
+              ipv6: isIPv6 ? [hostname] : [],
+            });
+            return;
+          }
+
+          const { ipv4, ipv6 } = await resolveDNS(hostname);
+          setResult({
+            hostname,
+            ipv4,
+            ipv6,
+          });
+        } catch (error) {
+          setResult({
+            hostname: extractHostname(initialUrl) || initialUrl,
+            ipv4: [],
+            ipv6: [],
+            error:
+              error instanceof Error ? error.message : "Unknown error occurred",
+          });
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      runInitialCheck();
+    }
+  }, [extractHostname, resolveDNS, isIPAddress]); // Include dependencies for the functions used
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       handleResolve();
     }
@@ -201,18 +288,14 @@ export default function Checker() {
 
   return (
     <Container className="h-auto">
-      <h3 className="text-lg font-semibold text-gray-300 mb-4">
-        Check URL history
-      </h3>
-
       <div className="space-y-4">
         <div className="flex gap-2">
           <input
             type="text"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Enter URL, hostname, or IP address (e.g., example.com 2001:db8::1)"
+            onKeyDown={handleKeyDown}
+            placeholder="Enter URL, hostname, or IP address (e.g. https://example.net, example.com, 2001:db8::1, ...)"
             className="flex-1 px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none"
           />
           <button
