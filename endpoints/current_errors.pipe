@@ -17,7 +17,7 @@ SQL >
         (
             SELECT
                 check_name,
-                arrayMap((_, success) -> success, groupArraySorted(5)((-toUnixTimestamp(timestamp), success))) AS check_results,
+                groupArray(success) AS check_results,
                 toUnixTimestamp(max(timestamp)) AS last_timestamp,
                 argMax(error, timestamp) AS last_error
             FROM results
