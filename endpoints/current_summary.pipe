@@ -19,7 +19,7 @@ SQL >
             SELECT
                 check_name,
                 toUnixTimestamp(max(timestamp)) AS last_check_timestamp,
-                arrayMap((_, success) -> success, groupArraySorted(3)((-toUnixTimestamp(timestamp), success))) AS check_results
+                arrayMap((_, success) -> success, groupArraySorted(5)((-toUnixTimestamp(timestamp), success))) AS check_results
             FROM results
             WHERE timestamp >= now() - INTERVAL 15 MINUTE
             GROUP BY check_name
