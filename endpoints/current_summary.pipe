@@ -10,7 +10,7 @@ SQL >
             WHEN length(splitByString(' - ', check_name)) == 2 THEN splitByString(' - ', check_name)[1]
             ELSE 'Ungrouped'
         END AS group_name,
-        countIf(arrayCount(success -> success, check_results) / length(check_results) > 0.5) AS successful_checks,
+        countIf(arrayCount(success -> success, check_results) / length(check_results) >= 0.75) AS successful_checks,
         toUInt64(count() - successful_checks) AS failing_checks,
         count() AS total_checks,
         max(last_check_timestamp) AS last_check_timestamp
