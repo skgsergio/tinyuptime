@@ -217,6 +217,9 @@ export default function HistoryGraph() {
     chartData[point.timestamp][point.group_name] = point.failing_checks;
   });
 
+  // Create ordered array of series names for consistent color mapping
+  const chartSeriesArray = Array.from(chartSeries);
+
   // Create a list of unique markers by start and end date
   const uniqueMarkers: {
     [key: string]: {
@@ -288,15 +291,16 @@ export default function HistoryGraph() {
                 }
               }}
               formatter={(value) => {
-                const chartSeriesArray = Array.from(chartSeries);
-                const seriesIdx = chartSeriesArray.indexOf(value);
                 return (
                   <span
                     className="text-sm font-mono cursor-pointer"
                     style={{
                       color: disabledSeries.has(value)
                         ? "var(--color-gray-500)"
-                        : GRAPH_COLORS[seriesIdx % GRAPH_COLORS.length],
+                        : GRAPH_COLORS[
+                            chartSeriesArray.indexOf(value) %
+                              GRAPH_COLORS.length
+                          ],
                     }}
                   >
                     {value}
@@ -324,7 +328,7 @@ export default function HistoryGraph() {
               />
             ))}
 
-            {Array.from(chartSeries).map((group, idx) => (
+            {chartSeriesArray.map((group, idx) => (
               <Line
                 key={group}
                 type="linear"
