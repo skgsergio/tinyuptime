@@ -287,18 +287,22 @@ export default function HistoryGraph() {
                   toggleDisabledSeries(entry.value);
                 }
               }}
-              formatter={(value, _, idx) => (
-                <span
-                  className="text-sm font-mono cursor-pointer"
-                  style={{
-                    color: disabledSeries.has(value)
-                      ? "var(--color-gray-500)"
-                      : GRAPH_COLORS[idx % GRAPH_COLORS.length],
-                  }}
-                >
-                  {value}
-                </span>
-              )}
+              formatter={(value) => {
+                const chartSeriesArray = Array.from(chartSeries);
+                const seriesIdx = chartSeriesArray.indexOf(value);
+                return (
+                  <span
+                    className="text-sm font-mono cursor-pointer"
+                    style={{
+                      color: disabledSeries.has(value)
+                        ? "var(--color-gray-500)"
+                        : GRAPH_COLORS[seriesIdx % GRAPH_COLORS.length],
+                    }}
+                  >
+                    {value}
+                  </span>
+                );
+              }}
             />
             {Object.entries(uniqueMarkers).map(([key, marker]) => (
               <ReferenceArea
