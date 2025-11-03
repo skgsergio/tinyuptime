@@ -218,7 +218,7 @@ export default function HistoryGraph() {
   });
 
   // Create ordered array of series names for consistent color mapping
-  const chartSeriesArray = Array.from(chartSeries);
+  const chartSeriesArray = Array.from(chartSeries).sort();
 
   // Create a list of unique markers by start and end date
   const uniqueMarkers: {
