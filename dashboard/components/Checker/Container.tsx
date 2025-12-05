@@ -8,7 +8,7 @@ export default function Container({
   className?: string;
 }) {
   return (
-    <div className={`bg-gray-800 p-6 rounded-lg shadow-lg ${className || ""}`}>
+    <div className={`bg-gray-800 p-6 mb-6 rounded-lg shadow-lg ${className || ""}`}>
       {children}
     </div>
   );

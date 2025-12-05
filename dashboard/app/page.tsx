@@ -56,13 +56,13 @@ export default function Home() {
 
         <ErrorsTable />
 
+        <h2 className="text-2xl font-bold mb-4 text-white">Check site</h2>
+
+        <Checker />
+
         <h2 className="text-2xl font-bold mb-4 text-white">History Graph</h2>
 
         <HistoryGraph />
-
-        <h2 className="text-2xl font-bold mb-4 text-white">Checker</h2>
-
-        <Checker />
 
         <PageRefresh />
       </TimerProvider>
