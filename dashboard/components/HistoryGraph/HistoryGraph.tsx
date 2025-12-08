@@ -462,6 +462,16 @@ export default function HistoryGraph() {
                 );
               }}
             />
+            {zoomLeft !== null && zoomRight !== null && (
+              <ReferenceArea
+                x1={0}
+                y1={0}
+                fill="var(--color-gray-900)"
+                fillOpacity={0.25}
+                ifOverflow="hidden"
+                stroke="none"
+              />
+            )}
             {Object.entries(uniqueMarkers).map(([key, marker]) => (
               <ReferenceArea
                 key={key}
