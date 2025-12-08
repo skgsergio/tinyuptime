@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer, useRef } from "react";
 
 import {
   LineChart,
@@ -117,6 +117,12 @@ export default function HistoryGraph() {
     },
     new Set<string>(),
   );
+  const [zoomLeft, setZoomLeft] = useState<number | null>(null);
+  const [zoomRight, setZoomRight] = useState<number | null>(null);
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectionStart, setSelectionStart] = useState<number | null>(null);
+  const [selectionEnd, setSelectionEnd] = useState<number | null>(null);
+  const chartContainerRef = useRef<HTMLDivElement>(null);
 
   // Initialize state with URL parameter if available
   const getInitialInterval = () => {
@@ -197,6 +203,15 @@ export default function HistoryGraph() {
       });
   }, [currentInterval, reloadDate]);
 
+  // Reset zoom when interval changes
+  useEffect(() => {
+    setZoomLeft(null);
+    setZoomRight(null);
+    setIsSelecting(false);
+    setSelectionStart(null);
+    setSelectionEnd(null);
+  }, [currentInterval]);
+
   if (firstLoad) return <Widget className="animate-pulse"></Widget>;
   if (error) return <Widget className="text-red-400">{error}</Widget>;
   if (!data || data.length === 0) return <Widget>No data available</Widget>;
@@ -217,8 +232,107 @@ export default function HistoryGraph() {
     chartData[point.timestamp][point.group_name] = point.failing_checks;
   });
 
+  // Filter data based on zoom
+  const filteredChartData = Object.values(chartData).filter((point) => {
+    if (zoomLeft === null || zoomRight === null) {
+      return true;
+    }
+    const min = Math.min(zoomLeft, zoomRight);
+    const max = Math.max(zoomLeft, zoomRight);
+    return point.timestamp >= min && point.timestamp <= max;
+  });
+
   // Create ordered array of series names for consistent color mapping
   const chartSeriesArray = Array.from(chartSeries).sort();
+
+  // Helper function to get timestamp from mouse X position
+  const getTimestampFromMouseX = (clientX: number): number | null => {
+    if (!chartContainerRef.current || filteredChartData.length === 0) {
+      return null;
+    }
+
+    const rect = chartContainerRef.current.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const width = rect.width;
+    
+    // Recharts default margins: left ~60px (Y-axis), right ~25px
+    const marginLeft = 60;
+    const marginRight = 25;
+    const chartWidth = width - marginLeft - marginRight;
+
+    if (x < marginLeft || x > width - marginRight || chartWidth <= 0) {
+      return null;
+    }
+
+    const relativeX = Math.max(0, Math.min(1, (x - marginLeft) / chartWidth));
+    const timestamps = filteredChartData.map((d) => d.timestamp).sort((a, b) => a - b);
+    const minTimestamp = timestamps[0];
+    const maxTimestamp = timestamps[timestamps.length - 1];
+    const timestampRange = maxTimestamp - minTimestamp;
+    
+    if (timestampRange === 0) {
+      return minTimestamp;
+    }
+    
+    const timestamp = minTimestamp + relativeX * timestampRange;
+
+    // Find the closest actual timestamp
+    return timestamps.reduce((prev, curr) => {
+      return Math.abs(curr - timestamp) < Math.abs(prev - timestamp) ? curr : prev;
+    });
+  };
+
+  // Mouse event handlers for selection
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const timestamp = getTimestampFromMouseX(e.clientX);
+    if (timestamp !== null) {
+      setIsSelecting(true);
+      setSelectionStart(timestamp);
+      setSelectionEnd(timestamp);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isSelecting) {
+      const timestamp = getTimestampFromMouseX(e.clientX);
+      if (timestamp !== null) {
+        setSelectionEnd(timestamp);
+      }
+    }
+  };
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (isSelecting && selectionStart !== null && selectionEnd !== null) {
+      const timestamp = getTimestampFromMouseX(e.clientX);
+      const endTimestamp = timestamp ?? selectionEnd;
+      const min = Math.min(selectionStart, endTimestamp);
+      const max = Math.max(selectionStart, endTimestamp);
+      // Only apply zoom if selection is meaningful
+      if (min !== max) {
+        setZoomLeft(min);
+        setZoomRight(max);
+      }
+    }
+    setIsSelecting(false);
+    setSelectionStart(null);
+    setSelectionEnd(null);
+  };
+
+  const clearZoom = () => {
+    setZoomLeft(null);
+    setZoomRight(null);
+  };
+
+  const handleDoubleClick = clearZoom;
+
+  const handleMouseLeave = () => {
+    if (isSelecting) {
+      setIsSelecting(false);
+      setSelectionStart(null);
+      setSelectionEnd(null);
+    }
+  };
 
   // Create a list of unique markers by start and end date
   const uniqueMarkers: {
@@ -247,15 +361,53 @@ export default function HistoryGraph() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <Widget className="md:col-span-2">
-        <IntervalButtons
-          intervals={INTERVALS}
-          hidden_intervals={HIDDEN_INTERVALS}
-          defaultInterval={DEFAULT_INTERVAL}
-          currentInterval={currentInterval}
-          setIntervalParam={setIntervalParam}
-        />
-        <ResponsiveContainer width="100%" height="90%">
-          <LineChart data={Object.values(chartData)} margin={{ right: 25 }}>
+        <div className="flex items-center justify-end mb-2">
+          <IntervalButtons
+            intervals={INTERVALS}
+            hidden_intervals={HIDDEN_INTERVALS}
+            defaultInterval={DEFAULT_INTERVAL}
+            currentInterval={currentInterval}
+            setIntervalParam={setIntervalParam}
+          />
+        </div>
+        <div
+          ref={chartContainerRef}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onDoubleClick={handleDoubleClick}
+          style={{ 
+            height: "90%", 
+            position: "relative",
+            outline: "none"
+          }}
+          className="w-full select-none"
+          tabIndex={-1}
+        >
+          {zoomLeft !== null && zoomRight !== null && (
+            <button
+              onClick={clearZoom}
+              className="absolute top-2 right-2 z-10 text-sm font-mono text-gray-400 hover:text-gray-200 px-2 py-1 rounded border border-gray-600 hover:border-gray-500 transition-colors bg-gray-950 bg-opacity-80"
+              title="Clear zoom (or double-click chart)"
+            >
+              Clear Zoom
+            </button>
+          )}
+          {isSelecting && selectionStart !== null && selectionEnd !== null && (
+            <div className="absolute top-2 left-2 z-10 text-sm font-mono px-3 py-2 rounded bg-gray-950 bg-opacity-90 text-gray-200">
+              {formatDateTimeRange(
+                Math.min(selectionStart, selectionEnd),
+                Math.max(selectionStart, selectionEnd)
+              )}
+            </div>
+          )}
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart 
+              data={filteredChartData} 
+              margin={{ right: 25 }}
+              style={{ cursor: isSelecting ? "crosshair" : "default" }}
+            >
             <XAxis
               className="text-sm font-mono fill-gray-300"
               stroke="var(--color-gray-300)"
@@ -272,17 +424,19 @@ export default function HistoryGraph() {
               allowDecimals={false}
             />
             <CartesianGrid stroke="var(--color-gray-700)" strokeDasharray="4" />
-            <Tooltip
-              wrapperClassName="rounded font-mono text-sm"
-              labelClassName="font-bold pb-2"
-              contentStyle={{
-                backgroundColor: "var(--color-gray-950)",
-                color: "var(--color-white)",
-                border: undefined,
-              }}
-              labelFormatter={(ts) => formatDateTime(ts)}
-              formatter={(value: number, name: string) => [value, name]}
-            />
+            {!isSelecting && (
+              <Tooltip
+                wrapperClassName="rounded font-mono text-sm"
+                labelClassName="font-bold pb-2"
+                contentStyle={{
+                  backgroundColor: "var(--color-gray-950)",
+                  color: "var(--color-white)",
+                  border: undefined,
+                }}
+                labelFormatter={(ts) => formatDateTime(ts)}
+                formatter={(value: number, name: string) => [value, name]}
+              />
+            )}
             <Legend
               iconType="line"
               onClick={(entry) => {
@@ -327,6 +481,20 @@ export default function HistoryGraph() {
                 className={hoveredKey === key ? "animate-pulse" : ""}
               />
             ))}
+            {isSelecting &&
+              selectionStart !== null &&
+              selectionEnd !== null && (
+                <ReferenceArea
+                  x1={selectionStart}
+                  x2={selectionEnd}
+                  stroke="var(--color-blue-400)"
+                  strokeWidth={2}
+                  strokeDasharray="4 4"
+                  fill="var(--color-blue-400)"
+                  fillOpacity={0.1}
+                  ifOverflow="hidden"
+                />
+              )}
 
             {chartSeriesArray.map((group, idx) => (
               <Line
@@ -342,6 +510,7 @@ export default function HistoryGraph() {
             ))}
           </LineChart>
         </ResponsiveContainer>
+        </div>
       </Widget>
       <Widget className="scrollbar-thin overflow-y-auto">
         <h3 className="text-lg font-semibold text-gray-300 mb-2">Markers</h3>
